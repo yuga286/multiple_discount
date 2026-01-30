@@ -5,5 +5,5 @@
 [post_model_sync]
 # Patches added in this section will be executed after doctypes are migrated
 
-multiple_uom.patches.add_sales_order_item_discounts
+# multiple_uom.patches.add_discounts_field
 
