@@ -8,6 +8,9 @@ app_license = "mit"
 doctype_js = {
     "Sales Order": "public/js/sales_order_item.js"
 }
+patches = [
+    "multiple_dis.patches.add_discounts"
+]
 # Apps
 # ------------------
 
