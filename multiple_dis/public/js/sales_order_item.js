@@ -108,12 +108,12 @@ function recalc_row(cdt, cdn) {
     // });
     frappe.model.set_value(cdt, cdn, "rate", final_rate);
     frappe.model.set_value(cdt, cdn, "basic_rate", final_rate);
-    frappe.model.set_value(cdt, cdn, "custom_discount_1_", d1_pct);
+    frappe.model.set_value(cdt, cdn, "discount_1_", d1_pct);
     frappe.model.set_value(cdt, cdn, "custom_discount_amount_1", d1_amt);
-    frappe.model.set_value(cdt, cdn, "custom_amount_after_discount_1", amount_after_d1);
+    frappe.model.set_value(cdt, cdn, "amount_after_discount_1", amount_after_d1);
 
     frappe.model.set_value(cdt, cdn, "custom_discount_amount_2", d2_amt);
-    frappe.model.set_value(cdt, cdn, "custom_amount_after_discount_2", amount_after_d2);
+    frappe.model.set_value(cdt, cdn, "amount_after_discount_2", amount_after_d2);
 
     frappe.model.set_value(cdt, cdn, "discount_amount", d1_amt + d2_amt);
 
@@ -126,13 +126,13 @@ function force_grid_refresh(cdn) {
     if (!row) return;
 
     [
-        "custom_discount_1_",
+        "discount_1_",
         "custom_discount_amount_1",
-        "custom_amount_after_discount_1",
+        "amount_after_discount_1",
         "custom_discount_amount_2",
-        "custom_amount_after_discount_2",
+        "amount_after_discount_2",
         "discount_amount",
-        "custom_secondary_uom_qty"
+        "alternate_qty"
     ].forEach(f => row.refresh_field(f));
 }
 
@@ -162,16 +162,16 @@ function set_secondary_uom(frm, cdt, cdn) {
                 let qty = flt(row.qty);
                 let cf  = flt(sec.conversion_factor);
 
-                frappe.model.set_value(cdt, cdn, "custom_secondary_uom", sec.uom);
-                frappe.model.set_value(cdt, cdn, "custom_secondary_uom_conversion_factor", cf);
+                frappe.model.set_value(cdt, cdn, "alternate_uom", sec.uom);
+                frappe.model.set_value(cdt, cdn, "alternate_uom_conversion_factor", cf);
                 frappe.model.set_value(
                     cdt,
                     cdn,
-                    "custom_secondary_uom_qty",
+                    "alternate_qty",
                     qty ? qty / cf : 0
                 );
 
-                // console.log("RECALC → Qty:", qty, "CF:", cf);
+                console.log("RECALC → Qty:", qty, "CF:", cf);
             }
         });
     }, 200); //  critical
@@ -185,12 +185,12 @@ function recalc_secondary_uom(frm, cdt, cdn) {
 
         let qty = flt(row.qty);
         if (!qty) {
-            frappe.model.set_value(cdt, cdn, "custom_secondary_uom_qty", 0);
+            frappe.model.set_value(cdt, cdn, "alternate_qty", 0);
             return;
         }
 
         // ERPNext already has this from Item master
-        let cf = flt(row.custom_secondary_uom_conversion_factor);
+        let cf = flt(row.alternate_uom_conversion_factor);
         if (!cf) return;
 
         let alt_qty = qty / cf;
@@ -198,11 +198,11 @@ function recalc_secondary_uom(frm, cdt, cdn) {
         frappe.model.set_value(
             cdt,
             cdn,
-            "custom_secondary_uom_qty",
+            "alternate_qty",
             alt_qty
         );
 
-        // console.log("UPDATED → Qty:", qty, "CF:", cf, "Alt Qty:", alt_qty);
+        console.log("UPDATED → Qty:", qty, "CF:", cf, "Alt Qty:", alt_qty);
     }, 200); // <-- THIS is the key
 }
 
@@ -217,7 +217,7 @@ function fetch_pricing_discount(frm, cdt, cdn) {
         if (!qty || !rate) return;
 
         frappe.call({
-            method: "multiple_dis.api.get_base_price_discount",
+            method: "multiple_uom.api.get_base_price_discount",
             args: {
                 item_code: row.item_code,
                 price_list: frm.doc.selling_price_list,
@@ -228,7 +228,7 @@ function fetch_pricing_discount(frm, cdt, cdn) {
             },
             callback(r) {
                 let d1_pct = flt(r.message?.discount_percentage || 0);
-                frappe.model.set_value(cdt, cdn, "custom_discount_1_", d1_pct);
+                frappe.model.set_value(cdt, cdn, "discount_1_", d1_pct);
 
                 recalc_row(cdt, cdn);
             }
@@ -241,8 +241,8 @@ function reverse_qty_from_alternate(frm, cdt, cdn) {
         let row = locals[cdt][cdn];
         if (!row) return;
 
-        let alt_qty = flt(row.custom_secondary_uom_qty);
-        let cf = flt(row.custom_secondary_uom_conversion_factor);
+        let alt_qty = flt(row.alternate_qty);
+        let cf = flt(row.alternate_uom_conversion_factor);
         if (!alt_qty || !cf) return;
 
         let qty = alt_qty * cf;
