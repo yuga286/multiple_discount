@@ -5,6 +5,9 @@ app_description = "multiple discout and uom"
 app_email = "vigisolvo@gmail.com"
 app_license = "mit"
 
+doctype_js = {
+    "Sales Order": "public/js/sales_order_item.js"
+}
 # Apps
 # ------------------
 
