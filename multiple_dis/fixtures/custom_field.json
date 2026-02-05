@@ -89,7 +89,7 @@
     "dt": "Sales Order Item",
     "fieldname": "alternate_uom_conversion_factor",
     "label": "Secondary UOM Conversion Factor",
-    "fieldtype": "Float",
+    "fieldtype": "Data",
     "insert_after": "alternate_uom",
     "read_only": 1
   },
@@ -204,7 +204,7 @@
     "dt": "Delivery Note Item",
     "fieldname": "alternate_uom_conversion_factor",
     "label": "Secondary UOM Conversion Factor",
-    "fieldtype": "Float",
+    "fieldtype": "Data",
     "insert_after": "alternate_uom",
     "read_only": 1
   }
