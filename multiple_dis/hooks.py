@@ -8,6 +8,27 @@ app_license = "mit"
 doctype_js = {
     "Sales Order": "public/js/sales_order_item.js"
 }
+
+fixtures = [
+    {
+        "doctype": "Custom Field",
+        "filters": [
+            ["fieldname", "in", [
+                "discount_1_",
+                "custom_discount_amount_1",
+                "amount_after_discount_1",
+                "discount_2",
+                "custom_discount_amount_2",
+                "amount_after_discount_2",
+                "alternate_qty",
+                "alternate_uom",
+                "alternate_uom_conversion_factor"
+            ]]
+        ]
+    }
+]
+
+
 # patches = [
 #     "multiple_dis.patches.add_discounts"
 # ]

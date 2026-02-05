@@ -217,7 +217,7 @@ function fetch_pricing_discount(frm, cdt, cdn) {
         if (!qty || !rate) return;
 
         frappe.call({
-            method: "multiple_uom.api.get_base_price_discount",
+            method: "multiple_dis.api.get_base_price_discount",
             args: {
                 item_code: row.item_code,
                 price_list: frm.doc.selling_price_list,

@@ -1,0 +1,211 @@
+[
+  {
+    "doctype": "Custom Field",
+    "name": "Sales Order Item-discount_1_",
+    "dt": "Sales Order Item",
+    "fieldname": "discount_1_",
+    "label": "Discount 1 (%)",
+    "fieldtype": "Percent",
+    "insert_after": "price_list_rate",
+    "read_only": 1
+  },
+  {
+    "doctype": "Custom Field",
+    "name": "Sales Order Item-custom_discount_amount_1",
+    "dt": "Sales Order Item",
+    "fieldname": "custom_discount_amount_1",
+    "label": "Discount Amount 1",
+    "fieldtype": "Currency",
+    "options": "currency",
+    "insert_after": "discount_1_",
+    "read_only": 1
+  },
+  {
+    "doctype": "Custom Field",
+    "name": "Sales Order Item-amount_after_discount_1",
+    "dt": "Sales Order Item",
+    "fieldname": "amount_after_discount_1",
+    "label": "Amount After Discount 1",
+    "fieldtype": "Currency",
+    "options": "currency",
+    "insert_after": "custom_discount_amount_1",
+    "read_only": 1
+  },
+  {
+    "doctype": "Custom Field",
+    "name": "Sales Order Item-discount_2",
+    "dt": "Sales Order Item",
+    "fieldname": "discount_2",
+    "label": "Discount 2 (%)",
+    "fieldtype": "Percent",
+    "insert_after": "amount_after_discount_1"
+  },
+  {
+    "doctype": "Custom Field",
+    "name": "Sales Order Item-custom_discount_amount_2",
+    "dt": "Sales Order Item",
+    "fieldname": "custom_discount_amount_2",
+    "label": "Discount Amount 2",
+    "fieldtype": "Currency",
+    "options": "currency",
+    "insert_after": "discount_2",
+    "read_only": 1
+  },
+  {
+    "doctype": "Custom Field",
+    "name": "Sales Order Item-amount_after_discount_2",
+    "dt": "Sales Order Item",
+    "fieldname": "amount_after_discount_2",
+    "label": "Amount After Discount 2",
+    "fieldtype": "Currency",
+    "options": "currency",
+    "insert_after": "custom_discount_amount_2",
+    "read_only": 1
+  },
+  {
+    "doctype": "Custom Field",
+    "name": "Sales Order Item-alternate_qty",
+    "dt": "Sales Order Item",
+    "fieldname": "alternate_qty",
+    "label": "Secondary UOM Qty",
+    "fieldtype": "Float",
+    "insert_after": "qty",
+    "read_only": 1
+  },
+  {
+    "doctype": "Custom Field",
+    "name": "Sales Order Item-alternate_uom",
+    "dt": "Sales Order Item",
+    "fieldname": "alternate_uom",
+    "label": "Secondary UOM",
+    "fieldtype": "Link",
+    "options": "UOM",
+    "insert_after": "alternate_qty",
+    "read_only": 1
+  },
+  {
+    "doctype": "Custom Field",
+    "name": "Sales Order Item-alternate_uom_conversion_factor",
+    "dt": "Sales Order Item",
+    "fieldname": "alternate_uom_conversion_factor",
+    "label": "Secondary UOM Conversion Factor",
+    "fieldtype": "Float",
+    "insert_after": "alternate_uom",
+    "read_only": 1
+  },
+ 
+  {
+    "doctype": "Custom Field",
+    "name": "Sales Invoice Item-discount_1_",
+    "dt": "Sales Invoice Item",
+    "fieldname": "discount_1_",
+    "label": "Discount 1 (%)",
+    "fieldtype": "Percent",
+    "insert_after": "price_list_rate",
+    "read_only": 1
+  },
+  {
+    "doctype": "Custom Field",
+    "name": "Sales Invoice Item-custom_discount_amount_1",
+    "dt": "Sales Invoice Item",
+    "fieldname": "custom_discount_amount_1",
+    "label": "Discount Amount 1",
+    "fieldtype": "Currency",
+    "options": "currency",
+    "insert_after": "discount_1_",
+    "read_only": 1
+  },
+  {
+    "doctype": "Custom Field",
+    "name": "Sales Invoice Item-amount_after_discount_1",
+    "dt": "Sales Invoice Item",
+    "fieldname": "amount_after_discount_1",
+    "label": "Amount After Discount 1",
+    "fieldtype": "Currency",
+    "options": "currency",
+    "insert_after": "custom_discount_amount_1",
+    "read_only": 1
+  },
+  {
+    "doctype": "Custom Field",
+    "name": "Sales Invoice Item-discount_2",
+    "dt": "Sales Invoice Item",
+    "fieldname": "discount_2",
+    "label": "Discount 2 (%)",
+    "fieldtype": "Percent",
+    "insert_after": "amount_after_discount_1"
+  },
+  {
+    "doctype": "Custom Field",
+    "name": "Sales Invoice Item-custom_discount_amount_2",
+    "dt": "Sales Invoice Item",
+    "fieldname": "custom_discount_amount_2",
+    "label": "Discount Amount 2",
+    "fieldtype": "Currency",
+    "options": "currency",
+    "insert_after": "discount_2",
+    "read_only": 1
+  },
+  {
+    "doctype": "Custom Field",
+    "name": "Sales Invoice Item-amount_after_discount_2",
+    "dt": "Sales Invoice Item",
+    "fieldname": "amount_after_discount_2",
+    "label": "Amount After Discount 2",
+    "fieldtype": "Currency",
+    "options": "currency",
+    "insert_after": "custom_discount_amount_2",
+    "read_only": 1
+  },
+ 
+  {
+    "doctype": "Custom Field",
+    "name": "Delivery Note Item-discount_1_",
+    "dt": "Delivery Note Item",
+    "fieldname": "discount_1_",
+    "label": "Discount 1 (%)",
+    "fieldtype": "Percent",
+    "insert_after": "rate",
+    "read_only": 1
+  },
+  {
+    "doctype": "Custom Field",
+    "name": "Delivery Note Item-discount_2",
+    "dt": "Delivery Note Item",
+    "fieldname": "discount_2",
+    "label": "Discount 2 (%)",
+    "fieldtype": "Percent",
+    "insert_after": "discount_1_"
+  },
+  {
+    "doctype": "Custom Field",
+    "name": "Delivery Note Item-alternate_qty",
+    "dt": "Delivery Note Item",
+    "fieldname": "alternate_qty",
+    "label": "Secondary UOM Qty",
+    "fieldtype": "Float",
+    "insert_after": "qty",
+    "read_only": 1
+  },
+  {
+    "doctype": "Custom Field",
+    "name": "Delivery Note Item-alternate_uom",
+    "dt": "Delivery Note Item",
+    "fieldname": "alternate_uom",
+    "label": "Secondary UOM",
+    "fieldtype": "Link",
+    "options": "UOM",
+    "insert_after": "alternate_qty",
+    "read_only": 1
+  },
+  {
+    "doctype": "Custom Field",
+    "name": "Delivery Note Item-alternate_uom_conversion_factor",
+    "dt": "Delivery Note Item",
+    "fieldname": "alternate_uom_conversion_factor",
+    "label": "Secondary UOM Conversion Factor",
+    "fieldtype": "Float",
+    "insert_after": "alternate_uom",
+    "read_only": 1
+  }
+]
