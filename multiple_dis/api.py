@@ -1,49 +1,59 @@
 import frappe
-from frappe.utils import nowdate
 
 @frappe.whitelist()
 def get_base_price_discount(
     item_code,
-    price_list,
-    price_list_rate=None,
-    qty=None,
-    customer=None,
-    company=None
+    selling_price_list,
+    company
 ):
-    # 1️ Find matching Pricing Rule (Discount based only)
-    qty = float(qty or 1)
-    price_list_rate = float(price_list_rate or 0)
-    pricing_rule_name = frappe.db.get_value(
+    if not item_code or not selling_price_list or not company:
+        return {
+            "pricing_rule": None,
+            "discount_percentage": 0
+        }
+
+    # 1️ Find applicable Pricing Rule (Discount based)
+    pricing_rule = frappe.db.get_value(
         "Pricing Rule",
         {
             "apply_on": "Item Code",
             "selling": 1,
             "rate_or_discount": "Discount Percentage",
-            # "price_list": price_list,
+            "for_price_list": selling_price_list,
             "company": company,
             "disable": 0
         },
-        "name"
+        ["name", "discount_percentage"],
+        as_dict=True
+    )
+    # frappe.msgprint(f"Queried Pricing Rule: {pricing_rule}")
+
+    if not pricing_rule:
+        return {
+            "pricing_rule": None,
+            # "discount_percentage": 0,
+            "discount_percentage": pricing_rule.discount_percentage
+        }
+
+    # 2️ Verify item exists in Pricing Rule Items table
+    item_exists = frappe.db.exists(
+        "Pricing Rule Item",
+        {
+            "parent": pricing_rule.name,
+            "item_code": item_code,
+            
+        }
     )
 
-    if not pricing_rule_name:
+    if not item_exists:
         return {
             "pricing_rule": None,
-            "discount_percentage": 0
+            # "discount_percentage": 0
+            "discount_percentage": pricing_rule.discount_percentage
         }
 
-    # 2 Fetch full Pricing Rule doc
-    pr = frappe.get_doc("Pricing Rule", pricing_rule_name)
-
-    # 3Verify item is part of rule
-    valid_items = [d.item_code for d in pr.items]
-    if item_code not in valid_items:
-        return {
-            "pricing_rule": None,
-            "discount_percentage": 0
-        }
-
+    # 3️ Return discount
     return {
-        "pricing_rule": pr.name,
-        "discount_percentage": pr.discount_percentage
+        "pricing_rule": pricing_rule.name,
+        "discount_percentage": pricing_rule.discount_percentage
     }

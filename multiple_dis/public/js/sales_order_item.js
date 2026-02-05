@@ -95,17 +95,7 @@ function recalc_row(cdt, cdn) {
 
     let d1_amt = (pl_rate - rate_after_d1) * qty;
     let d2_amt = (rate_after_d1 - final_rate) * qty;
-
-    // frappe.model.set_value(cdt, cdn, {
-    //     rate: final_rate,
-    //     basic_rate: final_rate,
-    //     discount_1_: d1_pct,
-    //     custom_discount_amount_1: d1_amt,
-    //     amount_after_discount_1: amount_after_d1,
-    //     custom_discount_amount_2: d2_amt,
-    //     amount_after_discount_2: amount_after_d2,
-    //     discount_amount: d1_amt + d2_amt
-    // });
+    
     frappe.model.set_value(cdt, cdn, "rate", final_rate);
     frappe.model.set_value(cdt, cdn, "basic_rate", final_rate);
     frappe.model.set_value(cdt, cdn, "discount_1_", d1_pct);
@@ -159,7 +149,7 @@ function set_secondary_uom(frm, cdt, cdn) {
                     return;
                 }
 
-                let qty = flt(row.qty);
+                let qty = cint(row.qty);
                 let cf  = flt(sec.conversion_factor);
 
                 frappe.model.set_value(cdt, cdn, "alternate_uom", sec.uom);
@@ -171,7 +161,7 @@ function set_secondary_uom(frm, cdt, cdn) {
                     qty ? qty / cf : 0
                 );
 
-                console.log("RECALC → Qty:", qty, "CF:", cf);
+                // console.log("RECALC → Qty:", qty, "CF:", cf);
             }
         });
     }, 200); //  critical
@@ -183,7 +173,7 @@ function recalc_secondary_uom(frm, cdt, cdn) {
         let row = locals[cdt][cdn];
         if (!row || !row.item_code) return;
 
-        let qty = flt(row.qty);
+        let qty = cint(row.qty);
         if (!qty) {
             frappe.model.set_value(cdt, cdn, "alternate_qty", 0);
             return;
@@ -202,7 +192,7 @@ function recalc_secondary_uom(frm, cdt, cdn) {
             alt_qty
         );
 
-        console.log("UPDATED → Qty:", qty, "CF:", cf, "Alt Qty:", alt_qty);
+        // console.log("UPDATED → Qty:", qty, "CF:", cf, "Alt Qty:", alt_qty);
     }, 200); // <-- THIS is the key
 }
 
@@ -217,16 +207,18 @@ function fetch_pricing_discount(frm, cdt, cdn) {
         if (!qty || !rate) return;
 
         frappe.call({
-            method: "multiple_dis.api.get_base_price_discount",
+            method: "multiple_uom.api.get_base_price_discount",
             args: {
                 item_code: row.item_code,
                 price_list: frm.doc.selling_price_list,
+                selling_price_list: frm.doc.selling_price_list,
                 price_list_rate: rate,
                 qty: qty,
                 customer: frm.doc.customer,
                 company: frm.doc.company
             },
             callback(r) {
+                // console.log("Pricing Response:", r);
                 let d1_pct = flt(r.message?.discount_percentage || 0);
                 frappe.model.set_value(cdt, cdn, "discount_1_", d1_pct);
 
@@ -245,7 +237,8 @@ function reverse_qty_from_alternate(frm, cdt, cdn) {
         let cf = flt(row.alternate_uom_conversion_factor);
         if (!alt_qty || !cf) return;
 
-        let qty = alt_qty * cf;
+        // let qty = alt_qty * cf;
+        let qty = Math.round(alt_qty * cf);
         frappe.model.set_value(cdt, cdn, "qty", qty);
 
         // trigger full recalculation
