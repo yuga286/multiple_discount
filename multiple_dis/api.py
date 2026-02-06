@@ -110,7 +110,7 @@ def get_secondary_uom(item_code):
         "UOM Conversion Detail",
         {
             "parent": item_code,
-            "secondary_uom": 1
+            "custom_secondary_uom": 1
         },
         ["uom", "conversion_factor"],
         as_dict=1
