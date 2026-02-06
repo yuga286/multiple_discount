@@ -69,8 +69,7 @@
     "fieldname": "alternate_qty",
     "label": "Secondary UOM Qty",
     "fieldtype": "Float",
-    "insert_after": "qty",
-    "read_only": 1
+    "insert_after": "qty"
   },
   {
     "doctype": "Custom Field",
@@ -80,8 +79,7 @@
     "label": "Secondary UOM",
     "fieldtype": "Link",
     "options": "UOM",
-    "insert_after": "alternate_qty",
-    "read_only": 1
+    "insert_after": "alternate_qty"
   },
   {
     "doctype": "Custom Field",
@@ -184,8 +182,7 @@
     "fieldname": "alternate_qty",
     "label": "Secondary UOM Qty",
     "fieldtype": "Float",
-    "insert_after": "qty",
-    "read_only": 1
+    "insert_after": "qty"
   },
   {
     "doctype": "Custom Field",
@@ -195,8 +192,7 @@
     "label": "Secondary UOM",
     "fieldtype": "Link",
     "options": "UOM",
-    "insert_after": "alternate_qty",
-    "read_only": 1
+    "insert_after": "alternate_qty"
   },
   {
     "doctype": "Custom Field",

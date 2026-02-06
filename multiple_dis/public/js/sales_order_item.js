@@ -559,26 +559,28 @@ function set_secondary_uom(frm, cdt, cdn) {
             name: row.item_code
         },
         callback(r) {
-            if (!r.message || !Array.isArray(r.message.uoms)) {
-                clear_alternate_fields(cdt, cdn);
-                return;
-            }
+            console.log("r value",r)
+            // if (!r.message || !Array.isArray(r.message.uoms)) {
+            //     clear_alternate_fields(cdt, cdn);
+            //     return;
+            // }
 
             let sec = r.message.uoms.find(u => u.secondary_uom === 1);
-            if (!sec) {
-                clear_alternate_fields(cdt, cdn);
-                return;
-            }
+            // if (!sec) {
+            //     clear_alternate_fields(cdt, cdn);
+            //     return;
+            // }
+            console.log("Secondary UOM:", sec);
 
             let cf = flt(sec.conversion_factor);
             let qty = flt(r.qty);
-            console.log("Set Secondary UOM → CF:", cf, "Qty:", qty);
+            console.log("Set Secondary UOM → CF:", cf, "Qty:", 1/cf);
 
             frappe.model.set_value(cdt, cdn, "alternate_uom", sec.uom);
             frappe.model.set_value(cdt, cdn, "alternate_uom_conversion_factor", cf);
 
             // IMPORTANT: qty may not exist yet
-            frappe.model.set_value(cdt, cdn, "alternate_qty", qty);
+            frappe.model.set_value(cdt, cdn, "alternate_qty", 1/cf);
         }
     });
 }
