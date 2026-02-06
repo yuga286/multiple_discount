@@ -516,7 +516,7 @@ function fetch_pricing_discount(frm, cdt, cdn) {
 function recalc_secondary_uom(frm, cdt, cdn) {
     let row = locals[cdt][cdn];
     if (!row || !row.item_code) return;
-
+    console.log("Recalc Secondary UOM → Item:", row.item_code);
     let qty = cint(row.qty);
     if (!qty) {
         frappe.model.set_value(cdt, cdn, "alternate_qty", 0);
@@ -525,7 +525,7 @@ function recalc_secondary_uom(frm, cdt, cdn) {
 
     let cf = flt(row.alternate_uom_conversion_factor);
     if (!cf) return;
-
+    console.log("Recalc Secondary UOM → CF:", cf);
     frappe.model.set_value(
         cdt,
         cdn,
@@ -542,7 +542,7 @@ function reverse_qty_from_alternate(frm, cdt, cdn) {
     if (!alt_qty || !cf) return;
 
     let qty = Math.round(alt_qty * cf);
-
+    console.log("Reverse Qty from Alternate → Alt Qty:", alt_qty, "CF:", cf, "Qty:", qty);
     // IMPORTANT: only set qty
     // qty event will handle everything else
     frappe.model.set_value(cdt, cdn, "qty", qty);
