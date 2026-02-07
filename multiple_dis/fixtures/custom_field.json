@@ -155,6 +155,38 @@
     "insert_after": "custom_discount_amount_2",
     "read_only": 1
   },
+  {
+    "doctype": "Custom Field",
+    "name": "Sales Invoice Item-alternate_qty",
+    "dt": "Sales Invoice Item",
+    "fieldname": "alternate_qty",
+    "label": "Secondary UOM Qty",
+    "fieldtype": "Float",
+    "insert_after": "qty",
+    "read_only": 1
+  },
+  {
+    "doctype": "Custom Field",
+    "name": "Sales Invoice Item-alternate_uom",
+    "dt": "Sales Invoice Item",
+    "fieldname": "alternate_uom",
+    "label": "Secondary UOM",
+    "fieldtype": "Link",
+    "options": "UOM",
+    "insert_after": "alternate_qty",
+    "read_only": 1
+  },
+  {
+    "doctype": "Custom Field",
+    "name": "Sales Invoice Item-alternate_uom_conversion_factor",
+    "dt": "Sales Invoice Item",
+    "fieldname": "alternate_uom_conversion_factor",
+    "label": "Secondary UOM Conversion Factor",
+    "fieldtype": "Data",
+    "insert_after": "alternate_uom",
+    "read_only": 1
+  },
+ 
  
   {
     "doctype": "Custom Field",
