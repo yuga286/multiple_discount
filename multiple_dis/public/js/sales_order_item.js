@@ -287,3 +287,104 @@ function recalc_secondary_uom(frm, cdt, cdn) {
         qty / cf
     );
 }
+
+
+
+// frappe.ui.form.on("Sales Order", {
+//     naming_series(frm) {
+//         if (!frm.doc.naming_series || !frm.doc.company) return;
+
+//         frappe.call({
+//             method: "multiple_dis.api.get_address_by_series",
+//             args: {
+//                 naming_series: frm.doc.naming_series,
+//                 company: frm.doc.company
+//             },
+//             callback(r) {
+//                 if (!r.message) return;
+
+//                 frm.set_value("dispatch_address_name", r.message.dispatch_address);
+//                 frm.set_value("company_address", r.message.company_address);
+//             }
+//         });
+//     }
+// });
+
+// frappe.ui.form.on("Sales Order", {
+//     naming_series(frm) {
+//         if (!frm.doc.naming_series || !frm.doc.company) return;
+
+//         const series_city_map = {
+//             "SO/G/FY/.#####": "Ghaziabad",
+//             "SO/N/FY/.#####": "Noida",
+//             "SO/M/FY/.#####": "Muzaffarpur"
+//         };
+
+//         let city = series_city_map[frm.doc.naming_series];
+//         if (!city) return;
+
+//         frappe.call({
+//             method: "multiple_dis.api.get_company_addresses_by_city",
+//             args: {
+//                 city: city,
+//                 company: frm.doc.company
+//             },
+//             callback(r) {
+//                 console.log("API response:", r.message);
+
+//                 if (!r.message) return;
+
+//                 frm.set_value("dispatch_address_name", r.message.dispatch_address);
+//                 frm.set_value("company_address", r.message.company_address);
+//             }
+//         });
+//         console.log("Naming Series changed to:", frm.doc.naming_series, "City:", city);
+//         console.log("Dispatch Address:", frm.doc.dispatch_address_name, "Company Address:", frm.doc.company_address);
+//     }
+// });
+
+
+frappe.ui.form.on("Sales Order", {
+
+    refresh(frm) {
+        handle_series_change(frm);
+    },
+
+    naming_series(frm) {
+        handle_series_change(frm);
+    },
+
+    onload_post_render(frm) {
+        handle_series_change(frm);
+    }
+});
+
+
+function handle_series_change(frm) {
+    if (!frm.doc.naming_series || !frm.doc.company) return;
+    console.log("Handling series change → Naming Series:", frm.doc.naming_series, "Company:", frm.doc.company);
+    const series_city_map = {
+        "SO/G/FY/.#####": "Ghaziabad",
+        "SO/N/FY/.#####": "Noida",
+        "SO/M/FY/.#####": "Muzaffarpur"
+    };
+    console.log("Series to City Map:", series_city_map);
+    let city = series_city_map[frm.doc.naming_series];
+    if (!city) return;
+
+    frappe.call({
+        method: "multiple_dis.api.get_company_addresses_by_city",
+        args: {
+            city: city,
+            company: frm.doc.company
+        },
+        callback(r) {
+            console.log("API response:", r.message);
+            if (!r.message) return;
+
+            frm.set_value("dispatch_address_name", r.message.dispatch_address);
+            frm.set_value("company_address", r.message.company_address);
+        }
+    });
+}
+
