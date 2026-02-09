@@ -120,29 +120,29 @@ def get_secondary_uom(item_code):
 
 
 
-import frappe
+# import frappe
 
-@frappe.whitelist()
-def get_company_addresses_by_city(city, company):
-    if not city:
-        return {}
+# @frappe.whitelist()
+# def get_company_addresses_by_city(city, company):
+#     if not city:
+#         return {}
 
-    address = frappe.db.get_all(
-        "Address",
-        filters={
-            "city": city,
-            "is_your_company_address": 1,
-            "disabled": 0
-        },
-        fields=["name"],
-        order_by="creation desc",
-        limit=1
-    )
+#     address = frappe.db.get_all(
+#         "Address",
+#         filters={
+#             "city": city,
+#             "is_your_company_address": 1,
+#             "disabled": 0
+#         },
+#         fields=["name"],
+#         order_by="creation desc",
+#         limit=1
+#     )
 
-    if not address:
-        return {}
+#     if not address:
+#         return {}
 
-    return {
-        "dispatch_address": address[0].name,
-        "company_address": address[0].name
-    }
+#     return {
+#         "dispatch_address": address[0].name,
+#         "company_address": address[0].name
+#     }

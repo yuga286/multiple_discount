@@ -344,47 +344,47 @@ function recalc_secondary_uom(frm, cdt, cdn) {
 // });
 
 
-frappe.ui.form.on("Sales Order", {
+// frappe.ui.form.on("Sales Order", {
 
-    refresh(frm) {
-        handle_series_change(frm);
-    },
+//     refresh(frm) {
+//         handle_series_change(frm);
+//     },
 
-    naming_series(frm) {
-        handle_series_change(frm);
-    },
+//     naming_series(frm) {
+//         handle_series_change(frm);
+//     },
 
-    onload_post_render(frm) {
-        handle_series_change(frm);
-    }
-});
+//     onload_post_render(frm) {
+//         handle_series_change(frm);
+//     }
+// });
 
 
-function handle_series_change(frm) {
-    if (!frm.doc.naming_series || !frm.doc.company) return;
-    console.log("Handling series change → Naming Series:", frm.doc.naming_series, "Company:", frm.doc.company);
-    const series_city_map = {
-        "SO/G/FY/.#####": "Ghaziabad",
-        "SO/N/FY/.#####": "Noida",
-        "SO/M/FY/.#####": "Muzaffarpur"
-    };
-    console.log("Series to City Map:", series_city_map);
-    let city = series_city_map[frm.doc.naming_series];
-    if (!city) return;
+// function handle_series_change(frm) {
+//     if (!frm.doc.naming_series || !frm.doc.company) return;
+//     console.log("Handling series change → Naming Series:", frm.doc.naming_series, "Company:", frm.doc.company);
+//     const series_city_map = {
+//         "SO/G/FY/.#####": "Ghaziabad",
+//         "SO/N/FY/.#####": "Noida",
+//         "SO/M/FY/.#####": "Muzaffarpur"
+//     };
+//     console.log("Series to City Map:", series_city_map);
+//     let city = series_city_map[frm.doc.naming_series];
+//     if (!city) return;
 
-    frappe.call({
-        method: "multiple_dis.api.get_company_addresses_by_city",
-        args: {
-            city: city,
-            company: frm.doc.company
-        },
-        callback(r) {
-            console.log("API response:", r.message);
-            if (!r.message) return;
+//     frappe.call({
+//         method: "multiple_dis.api.get_company_addresses_by_city",
+//         args: {
+//             city: city,
+//             company: frm.doc.company
+//         },
+//         callback(r) {
+//             console.log("API response:", r.message);
+//             if (!r.message) return;
 
-            frm.set_value("dispatch_address_name", r.message.dispatch_address);
-            frm.set_value("company_address", r.message.company_address);
-        }
-    });
-}
+//             frm.set_value("dispatch_address_name", r.message.dispatch_address);
+//             frm.set_value("company_address", r.message.company_address);
+//         }
+//     });
+// }
 
