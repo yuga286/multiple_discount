@@ -290,101 +290,54 @@ function recalc_secondary_uom(frm, cdt, cdn) {
 
 
 
-// frappe.ui.form.on("Sales Order", {
-//     naming_series(frm) {
-//         if (!frm.doc.naming_series || !frm.doc.company) return;
 
-//         frappe.call({
-//             method: "multiple_dis.api.get_address_by_series",
-//             args: {
-//                 naming_series: frm.doc.naming_series,
-//                 company: frm.doc.company
-//             },
-//             callback(r) {
-//                 if (!r.message) return;
+function handle_series_change(frm) {
+    if (!frm.doc.naming_series || !frm.doc.company) return;
 
-//                 frm.set_value("dispatch_address_name", r.message.dispatch_address);
-//                 frm.set_value("company_address", r.message.company_address);
-//             }
-//         });
-//     }
-// });
+    let city = get_city_from_series(frm.doc.naming_series);
+    if (!city) return;
 
-// frappe.ui.form.on("Sales Order", {
-//     naming_series(frm) {
-//         if (!frm.doc.naming_series || !frm.doc.company) return;
+    frappe.call({
+        method: "multiple_dis.api.get_addresses_for_sales_order",
+        args: {
+            city: city,
+            company: frm.doc.company,
+            customer: frm.doc.customer
+        },
+        callback(r) {
+            console.log("API response:", r.message);
+            if (!r.message) return;
 
-//         const series_city_map = {
-//             "SO/G/FY/.#####": "Ghaziabad",
-//             "SO/N/FY/.#####": "Noida",
-//             "SO/M/FY/.#####": "Muzaffarpur"
-//         };
+            if (r.message.dispatch_address) {
+                frm.set_value("dispatch_address_name", r.message.dispatch_address);
+                frm.set_value("company_address", r.message.company_address);
+            }
 
-//         let city = series_city_map[frm.doc.naming_series];
-//         if (!city) return;
+            if (r.message.shipping_address) {
+                frm.set_value("shipping_address_name", r.message.shipping_address);
+            }
+        }
+    });
+}
 
-//         frappe.call({
-//             method: "multiple_dis.api.get_company_addresses_by_city",
-//             args: {
-//                 city: city,
-//                 company: frm.doc.company
-//             },
-//             callback(r) {
-//                 console.log("API response:", r.message);
+function get_city_from_series(series) {
+    series = series.trim();
 
-//                 if (!r.message) return;
+    if (series.startsWith("SO/G/")) return "Ghaziabad";
+    if (series.startsWith("SO/N/")) return "Noida";
+    if (series.startsWith("SO/M/")) return "Muzaffarpur";
 
-//                 frm.set_value("dispatch_address_name", r.message.dispatch_address);
-//                 frm.set_value("company_address", r.message.company_address);
-//             }
-//         });
-//         console.log("Naming Series changed to:", frm.doc.naming_series, "City:", city);
-//         console.log("Dispatch Address:", frm.doc.dispatch_address_name, "Company Address:", frm.doc.company_address);
-//     }
-// });
+    return null;
+}
 
-
-// frappe.ui.form.on("Sales Order", {
-
-//     refresh(frm) {
-//         handle_series_change(frm);
-//     },
-
-//     naming_series(frm) {
-//         handle_series_change(frm);
-//     },
-
-//     onload_post_render(frm) {
-//         handle_series_change(frm);
-//     }
-// });
-
-
-// function handle_series_change(frm) {
-//     if (!frm.doc.naming_series || !frm.doc.company) return;
-//     console.log("Handling series change → Naming Series:", frm.doc.naming_series, "Company:", frm.doc.company);
-//     const series_city_map = {
-//         "SO/G/FY/.#####": "Ghaziabad",
-//         "SO/N/FY/.#####": "Noida",
-//         "SO/M/FY/.#####": "Muzaffarpur"
-//     };
-//     console.log("Series to City Map:", series_city_map);
-//     let city = series_city_map[frm.doc.naming_series];
-//     if (!city) return;
-
-//     frappe.call({
-//         method: "multiple_dis.api.get_company_addresses_by_city",
-//         args: {
-//             city: city,
-//             company: frm.doc.company
-//         },
-//         callback(r) {
-//             console.log("API response:", r.message);
-//             if (!r.message) return;
-
-//             frm.set_value("dispatch_address_name", r.message.dispatch_address);
-//             frm.set_value("company_address", r.message.company_address);
-//         }
-//     });
-// }
-
+frappe.ui.form.on("Sales Order", {
+    refresh(frm) {
+        handle_series_change(frm);
+    },
+    naming_series(frm) {
+        handle_series_change(frm);
+    },
+    customer(frm) {
+        handle_series_change(frm); // IMPORTANT
+    }
+});

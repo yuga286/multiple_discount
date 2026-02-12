@@ -1,65 +1,3 @@
-# import frappe
-
-# @frappe.whitelist()
-# def get_base_price_discount(
-#     item_code,
-#     selling_price_list,
-#     company
-# ):
-#     if not item_code or not selling_price_list or not company:
-#         return {
-#             "pricing_rule": None,
-#             "discount_percentage": 0
-#         }
-
-#     # 1️ Find applicable Pricing Rule (Discount based)
-#     pricing_rule = frappe.db.get_value(
-#         "Pricing Rule",
-#         {
-#             "apply_on": "Item Code",
-#             "selling": 1,
-#             "rate_or_discount": "Discount Percentage",
-#             "for_price_list": selling_price_list,
-#             "company": company,
-#             "disable": 0
-#         },
-#         ["name", "discount_percentage"],
-#         as_dict=True
-#         filters=[
-#             ["Pricing Rule Item", "item_code", "=", item_code]
-#         ]
-#     )
-#     # frappe.msgprint(f"Queried Pricing Rule: {pricing_rule}")
-
-#     if not pricing_rule:
-#         return {
-#             "pricing_rule": None,
-#             # "discount_percentage": 0,
-#             "discount_percentage": pricing_rule.discount_percentage
-#         }
-
-#     # 2️ Verify item exists in Pricing Rule Items table
-#     item_exists = frappe.db.exists(
-#         "Pricing Rule Item",
-#         {
-#             "parent": pricing_rule.name,
-#             "item_code": item_code,
-            
-#         }
-#     )
-
-#     if not item_exists:
-#         return {
-#             "pricing_rule": None,
-#             # "discount_percentage": 0
-#             "discount_percentage": pricing_rule.discount_percentage
-#         }
-
-#     # 3️ Return discount
-#     return {
-#         "pricing_rule": pricing_rule.name,
-#         "discount_percentage": pricing_rule.discount_percentage
-#     }
 
 
 
@@ -96,9 +34,11 @@ def get_base_price_discount(item_code, selling_price_list, company):
     # )
 
     if not pricing_rule:
-        return None
+        return {"discount_percentage": 0}
 
-    return pricing_rule[0]
+    return {
+        "discount_percentage": pricing_rule[0].get("discount_percentage", 0)
+    }
 
 
 @frappe.whitelist()
@@ -110,7 +50,7 @@ def get_secondary_uom(item_code):
         "UOM Conversion Detail",
         {
             "parent": item_code,
-            "custom_secondary_uom": 1
+            "secondary_uom": 1
         },
         ["uom", "conversion_factor"],
         as_dict=1
@@ -119,30 +59,44 @@ def get_secondary_uom(item_code):
     return row or {}
 
 
+# working code perfect
 
-# import frappe
+@frappe.whitelist()
+def get_addresses_for_sales_order(city=None, company=None, customer=None):
+    result = {}
 
-# @frappe.whitelist()
-# def get_company_addresses_by_city(city, company):
-#     if not city:
-#         return {}
+    # Company Address
+    if city:
+        company_addr = frappe.db.get_all(
+            "Address",
+            filters={
+                "city": city,
+                "is_your_company_address": 1,
+                "disabled": 0
+            },
+            fields=["name"],
+            order_by="creation desc",
+            limit=1
+        )
 
-#     address = frappe.db.get_all(
-#         "Address",
-#         filters={
-#             "city": city,
-#             "is_your_company_address": 1,
-#             "disabled": 0
-#         },
-#         fields=["name"],
-#         order_by="creation desc",
-#         limit=1
-#     )
+        if company_addr:
+            result["dispatch_address"] = company_addr[0].name
+            result["company_address"] = company_addr[0].name
 
-#     if not address:
-#         return {}
+    # Customer Shipping Address
+    if customer:
+        customer_links = frappe.get_all(
+            "Dynamic Link",
+            filters={
+                "link_doctype": "Customer",
+                "link_name": customer,
+                "parenttype": "Address"
+            },
+            fields=["parent"],
+            limit=1
+        )
 
-#     return {
-#         "dispatch_address": address[0].name,
-#         "company_address": address[0].name
-#     }
+        if customer_links:
+            result["shipping_address"] = customer_links[0].parent
+
+    return result
