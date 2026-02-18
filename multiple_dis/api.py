@@ -100,3 +100,67 @@ def get_addresses_for_sales_order(city=None, company=None, customer=None):
             result["shipping_address"] = customer_links[0].parent
 
     return result
+
+
+
+
+
+
+
+# import frappe
+
+# def freeze_item_qty(doc, method):
+#     if not doc.custom_bom_quantity_fixed:
+#         return
+
+#     if not doc.get("items"):
+#         return
+
+#     # Fetch previous version from DB
+#     old_doc = None
+#     if doc.name:
+#         old_doc = frappe.get_doc("Stock Entry", doc.name)
+
+#     if not old_doc:
+#         return
+
+#     # Restore item qty from old saved version
+#     old_qty_map = {}
+#     for d in old_doc.items:
+#         old_qty_map[d.name] = d.qty
+
+#     for d in doc.items:
+#         if d.name in old_qty_map:
+#             d.qty = old_qty_map[d.name]
+
+
+import frappe
+
+def freeze_item_qty(doc, method):
+    if not doc.custom_bom_quantity_fixed:
+        return
+
+    if not doc.name:
+        return
+    
+    # fetch previous saved version
+    old_doc = frappe.get_doc("Stock Entry", doc.name)
+    # frappe.msgprint(f"old data: {old_doc}")
+    
+    # if not self.is_new():
+    #     old_doc = self.get_doc_before_save()
+        
+    frappe.log_error(
+        title="Stock Entry Debug",
+        message=str(old_doc)
+    )
+
+
+
+    old_qty_map = {}
+    for row in old_doc.items:
+        old_qty_map[row.name] = row.qty
+
+    for row in doc.items:
+        if row.name in old_qty_map:
+            row.qty = old_qty_map[row.name]

@@ -6,8 +6,20 @@ app_email = "vigisolvo@gmail.com"
 app_license = "mit"
 
 doctype_js = {
-    "Sales Order": "public/js/sales_order_item.js"
+    "Sales Order": "public/js/sales_order_item.js",
+    "Stock Entry": "public/js/stock_entry.js"
 }
+override_doctype_class = {
+    "Stock Entry": "multiple_dis.overrides.stock_entry.CustomStockEntry"
+}
+
+
+doc_events = {
+    "Stock Entry": {
+        "before_save": "multiple_dis.api.freeze_item_qty"
+    }
+}
+
 
 fixtures = [
     {

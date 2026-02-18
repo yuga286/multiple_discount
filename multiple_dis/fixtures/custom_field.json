@@ -6,8 +6,7 @@
     "fieldname": "discount_1_",
     "label": "Discount 1 (%)",
     "fieldtype": "Percent",
-    "insert_after": "price_list_rate",
-    "read_only": 1
+    "insert_after": "price_list_rate"
   },
   {
     "doctype": "Custom Field",
@@ -17,8 +16,7 @@
     "label": "Discount Amount 1",
     "fieldtype": "Currency",
     "options": "currency",
-    "insert_after": "discount_1_",
-    "read_only": 1
+    "insert_after": "discount_1_"
   },
   {
     "doctype": "Custom Field",
@@ -28,8 +26,7 @@
     "label": "Amount After Discount 1",
     "fieldtype": "Currency",
     "options": "currency",
-    "insert_after": "custom_discount_amount_1",
-    "read_only": 1
+    "insert_after": "custom_discount_amount_1"
   },
   {
     "doctype": "Custom Field",
@@ -48,8 +45,7 @@
     "label": "Discount Amount 2",
     "fieldtype": "Currency",
     "options": "currency",
-    "insert_after": "discount_2",
-    "read_only": 1
+    "insert_after": "discount_2"
   },
   {
     "doctype": "Custom Field",
@@ -59,8 +55,7 @@
     "label": "Amount After Discount 2",
     "fieldtype": "Currency",
     "options": "currency",
-    "insert_after": "custom_discount_amount_2",
-    "read_only": 1
+    "insert_after": "custom_discount_amount_2"
   },
   {
     "doctype": "Custom Field",
@@ -88,8 +83,7 @@
     "fieldname": "alternate_uom_conversion_factor",
     "label": "Secondary UOM Conversion Factor",
     "fieldtype": "Data",
-    "insert_after": "alternate_uom",
-    "read_only": 1
+    "insert_after": "alternate_uom"
   },
  
   {
@@ -99,8 +93,7 @@
     "fieldname": "discount_1_",
     "label": "Discount 1 (%)",
     "fieldtype": "Percent",
-    "insert_after": "price_list_rate",
-    "read_only": 1
+    "insert_after": "price_list_rate"
   },
   {
     "doctype": "Custom Field",
@@ -110,8 +103,7 @@
     "label": "Discount Amount 1",
     "fieldtype": "Currency",
     "options": "currency",
-    "insert_after": "discount_1_",
-    "read_only": 1
+    "insert_after": "discount_1_"
   },
   {
     "doctype": "Custom Field",
@@ -121,8 +113,7 @@
     "label": "Amount After Discount 1",
     "fieldtype": "Currency",
     "options": "currency",
-    "insert_after": "custom_discount_amount_1",
-    "read_only": 1
+    "insert_after": "custom_discount_amount_1"
   },
   {
     "doctype": "Custom Field",
@@ -141,8 +132,7 @@
     "label": "Discount Amount 2",
     "fieldtype": "Currency",
     "options": "currency",
-    "insert_after": "discount_2",
-    "read_only": 1
+    "insert_after": "discount_2"
   },
   {
     "doctype": "Custom Field",
@@ -152,8 +142,7 @@
     "label": "Amount After Discount 2",
     "fieldtype": "Currency",
     "options": "currency",
-    "insert_after": "custom_discount_amount_2",
-    "read_only": 1
+    "insert_after": "custom_discount_amount_2"
   },
   {
     "doctype": "Custom Field",
@@ -162,8 +151,7 @@
     "fieldname": "alternate_qty",
     "label": "Secondary UOM Qty",
     "fieldtype": "Float",
-    "insert_after": "qty",
-    "read_only": 1
+    "insert_after": "qty"
   },
   {
     "doctype": "Custom Field",
@@ -173,8 +161,7 @@
     "label": "Secondary UOM",
     "fieldtype": "Link",
     "options": "UOM",
-    "insert_after": "alternate_qty",
-    "read_only": 1
+    "insert_after": "alternate_qty"
   },
   {
     "doctype": "Custom Field",
@@ -183,8 +170,7 @@
     "fieldname": "alternate_uom_conversion_factor",
     "label": "Secondary UOM Conversion Factor",
     "fieldtype": "Data",
-    "insert_after": "alternate_uom",
-    "read_only": 1
+    "insert_after": "alternate_uom"
   },
  
  
@@ -195,8 +181,7 @@
     "fieldname": "discount_1_",
     "label": "Discount 1 (%)",
     "fieldtype": "Percent",
-    "insert_after": "rate",
-    "read_only": 1
+    "insert_after": "rate"
   },
   {
     "doctype": "Custom Field",
@@ -233,7 +218,6 @@
     "fieldname": "alternate_uom_conversion_factor",
     "label": "Secondary UOM Conversion Factor",
     "fieldtype": "Data",
-    "insert_after": "alternate_uom",
-    "read_only": 1
+    "insert_after": "alternate_uom"
   }
 ]
