@@ -134,33 +134,46 @@ def get_addresses_for_sales_order(city=None, company=None, customer=None):
 #             d.qty = old_qty_map[d.name]
 
 
+# import frappe
+
+# def freeze_item_qty(doc, method):
+#     if not doc.custom_bom_quantity_fixed:
+#         return
+
+#     if not doc.name:
+#         return
+    
+#     # fetch previous saved version
+#     old_doc = frappe.get_doc("Stock Entry", doc.name)
+#     # frappe.msgprint(f"old data: {old_doc}")
+    
+#     # if not self.is_new():
+#     #     old_doc = self.get_doc_before_save()
+
+#     old_qty_map = {}
+#     for row in old_doc.items:
+#         old_qty_map[row.name] = row.qty
+
+#     for row in doc.items:
+#         if row.name in old_qty_map:
+#             row.qty = old_qty_map[row.name]
+
+
 import frappe
 
 def freeze_item_qty(doc, method):
     if not doc.custom_bom_quantity_fixed:
         return
 
-    if not doc.name:
+    # Only run for existing docs
+    old_doc = doc.get_doc_before_save()
+    if not old_doc:
         return
-    
-    # fetch previous saved version
-    old_doc = frappe.get_doc("Stock Entry", doc.name)
-    # frappe.msgprint(f"old data: {old_doc}")
-    
-    # if not self.is_new():
-    #     old_doc = self.get_doc_before_save()
-        
-    frappe.log_error(
-        title="Stock Entry Debug",
-        message=str(old_doc)
-    )
 
-
-
-    old_qty_map = {}
-    for row in old_doc.items:
-        old_qty_map[row.name] = row.qty
+    old_qty_map = {row.name: row.qty for row in old_doc.items}
 
     for row in doc.items:
-        if row.name in old_qty_map:
-            row.qty = old_qty_map[row.name]
+        # If qty was NOT changed by user, keep old value
+        if row.name in old_qty_map and row.qty != old_qty_map[row.name]:
+            # User changed it → allow it
+            continue

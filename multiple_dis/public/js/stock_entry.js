@@ -12,15 +12,12 @@ frappe.ui.form.on("Stock Entry", {
 
 
 function patch_get_items(frm) {
-    console.log("start1");
 
     if (frm._patched_get_items) return;
 
     frm._patched_get_items = true;
-    console.log("start2");
 
     let original_get_items = frm.cscript.get_items;
-    console.log("start3");
 
     frm.cscript.get_items = function () {
 
@@ -30,10 +27,56 @@ function patch_get_items(frm) {
             console.log("BOM recalculation blocked.");
             return;
         }
-        console.log("start4");
 
         if (original_get_items) {
             return original_get_items.apply(this, arguments);
         }
     };
 }
+
+
+// frappe.ui.form.on("Stock Entry", {
+//     fg_completed_qty: function(frm) {
+//         if (frm.doc.custom_bom_quantity_fixed) {
+//             frappe.msgprint("Freeze enabled. Raw material will not auto update.");
+//             return;
+//         }
+//     }
+// });
+
+
+
+
+
+// frappe.ui.form.on("Stock Entry", {
+
+//     refresh(frm) {
+//         stop_bom_behaviour(frm);
+//     },
+
+//     custom_bom_quantity_fixed(frm) {
+//         stop_bom_behaviour(frm);
+//     }
+// });
+
+// function stop_bom_behaviour(frm) {
+//     console.log("start1");
+
+//     if (!frm.doc.custom_bom_quantity_fixed) return;
+//     console.log("start2");
+//     // Stop get_items from firing
+//     if (frm.events.get_items) {
+//         console.log("start3");
+//         frm.events.get_items = function () {
+//             console.log("BOM blocked");
+//         };
+//     }
+//     console.log("start4");
+//     // Stop finished goods recalculation
+//     if (frm.stock_entry_controller) {
+//         frm.stock_entry_controller.update_finished_goods = function () {};
+//         frm.stock_entry_controller.set_basic_rate = function () {};
+//     }
+//     console.log("start5");
+//     frm.refresh_field("items");
+// }
