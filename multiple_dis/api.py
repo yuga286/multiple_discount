@@ -177,3 +177,44 @@ def freeze_item_qty(doc, method):
         if row.name in old_qty_map and row.qty != old_qty_map[row.name]:
             # User changed it → allow it
             continue
+
+
+
+
+
+
+
+import frappe
+
+@frappe.whitelist()
+def get_debtor_summary(company, from_date, to_date):
+
+    data = frappe.db.sql("""
+        SELECT 
+            party AS customer,
+            SUM(debit) AS debit,
+            SUM(credit) AS credit,
+            SUM(debit - credit) AS closing
+        FROM `tabGL Entry`
+        WHERE company = %s
+        AND posting_date BETWEEN %s AND %s
+        AND account_type = 'Receivable'
+        GROUP BY party
+    """, (company, from_date, to_date), as_dict=True)
+
+    html = "<table class='table table-bordered'>"
+    html += "<tr><th>Customer</th><th>Debit</th><th>Credit</th><th>Closing</th></tr>"
+
+    for row in data:
+        html += f"""
+        <tr>
+            <td>{row.customer}</td>
+            <td>{row.debit}</td>
+            <td>{row.credit}</td>
+            <td>{row.closing}</td>
+        </tr>
+        """
+
+    html += "</table>"
+
+    return html

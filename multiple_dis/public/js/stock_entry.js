@@ -35,48 +35,28 @@ function patch_get_items(frm) {
 }
 
 
-// frappe.ui.form.on("Stock Entry", {
-//     fg_completed_qty: function(frm) {
-//         if (frm.doc.custom_bom_quantity_fixed) {
-//             frappe.msgprint("Freeze enabled. Raw material will not auto update.");
-//             return;
-//         }
-//     }
-// });
 
 
+frappe.ui.form.on("Stock Entry", {
 
+    fg_completed_qty: function(frm) {
 
+        if (!frm.doc.custom_bom_quantity_fixed) {
+            return;  // normal ERP behaviour
+        }
 
-// frappe.ui.form.on("Stock Entry", {
+        let fg_qty = frm.doc.fg_completed_qty;
 
-//     refresh(frm) {
-//         stop_bom_behaviour(frm);
-//     },
+        (frm.doc.items || []).forEach(function(row) {
 
-//     custom_bom_quantity_fixed(frm) {
-//         stop_bom_behaviour(frm);
-//     }
-// });
+            if (row.is_finished_item) {
+                frappe.model.set_value(row.doctype, row.name, "qty", fg_qty);
+                frappe.model.set_value(row.doctype, row.name, "transfer_qty", fg_qty);
+            }
 
-// function stop_bom_behaviour(frm) {
-//     console.log("start1");
+        });
 
-//     if (!frm.doc.custom_bom_quantity_fixed) return;
-//     console.log("start2");
-//     // Stop get_items from firing
-//     if (frm.events.get_items) {
-//         console.log("start3");
-//         frm.events.get_items = function () {
-//             console.log("BOM blocked");
-//         };
-//     }
-//     console.log("start4");
-//     // Stop finished goods recalculation
-//     if (frm.stock_entry_controller) {
-//         frm.stock_entry_controller.update_finished_goods = function () {};
-//         frm.stock_entry_controller.set_basic_rate = function () {};
-//     }
-//     console.log("start5");
-//     frm.refresh_field("items");
-// }
+        frm.refresh_field("items");
+    }
+
+});
