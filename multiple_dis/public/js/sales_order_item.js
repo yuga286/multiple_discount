@@ -309,11 +309,6 @@ function handle_series_change(frm) {
             if (r.message.dispatch_address) {
                 frm.set_value("dispatch_address_name", r.message.dispatch_address);
                 frm.set_value("company_address", r.message.company_address);
-                frm.set_value("dispatch_address", r.message.customer_address);
-            }
-
-            if (r.message.shipping_address) {
-                frm.set_value("shipping_address_name", r.message.shipping_address);
             }
         }
     });
