@@ -106,7 +106,6 @@ import frappe
 
 @frappe.whitelist()
 def get_addresses_for_purchase_order(city=None, company=None, supplier=None):
-    frappe.msgprint("API HIT")
     result = {}
 
     # ----------------------------

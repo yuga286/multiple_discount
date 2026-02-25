@@ -1,6 +1,6 @@
 
 function handle_po_series_change(frm) {
-    console.log("Handling PO series change...");
+    // console.log("Handling PO series change...");
     if (!frm.doc.naming_series || !frm.doc.company) return;
 
     let city = get_city_from_po_series(frm.doc.naming_series);
