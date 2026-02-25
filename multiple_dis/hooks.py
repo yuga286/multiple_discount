@@ -7,19 +7,30 @@ app_license = "mit"
 
 doctype_js = {
     "Sales Order": "public/js/sales_order_item.js",
-    "Stock Entry": "public/js/stock_entry.js"
+    "Stock Entry": "public/js/stock_entry.js",
+    "Purchase Order": "public/js/purchase_order.js"
 }
 override_doctype_class = {
     "Stock Entry": "multiple_dis.overrides.stock_entry.CustomStockEntry"
+    # "Trial Balance": "multiple_dis.overrides.custom_trial_balance.CustomTrialBalance"
 }
-
-
+# doc_events = {
+#     "*": {
+#         "on_update": "multiple_dis.overrides.custom_trial_balance.test"
+#     }
+# }
+# override_report = {
+#     "erpnext.accounts.report.trial_balance.trial_balance":
+#         "multiple_dis.overrides.custom_trial_balance"
+# }
 doc_events = {
     "Stock Entry": {
         "before_save": "multiple_dis.api.freeze_item_qty"
     }
+    # "*": {
+    #     "on_update": "multiple_dis.overrides.custom_trial_balance.test"
+    # }
 }
-
 
 fixtures = [
     {

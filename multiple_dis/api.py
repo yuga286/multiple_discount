@@ -102,10 +102,53 @@ def get_addresses_for_sales_order(city=None, company=None, customer=None):
     return result
 
 
+import frappe
 
+@frappe.whitelist()
+def get_addresses_for_purchase_order(city=None, company=None, supplier=None):
+    frappe.msgprint("API HIT")
+    result = {}
 
+    # ----------------------------
+    # 1️ Company Address (City Based)
+    # ----------------------------
+    if city:
+        company_address = frappe.db.get_all(
+            "Address",
+            filters={
+                "city": city,
+                "is_your_company_address": 1,
+                "disabled": 0
+            },
+            fields=["name"],
+            order_by="creation desc",
+            limit=1
+        )
 
+        if company_address:
+            result["company_address"] = company_address[0].name
+            result["shipping_address"] = company_address[0].name
 
+    # ----------------------------
+    # 2️ Supplier Address → Dispatch
+    # ----------------------------
+    if supplier:
+        supplier_address = frappe.db.sql("""
+            SELECT addr.name
+            FROM `tabAddress` addr
+            INNER JOIN `tabDynamic Link` dl
+                ON dl.parent = addr.name
+            WHERE dl.link_doctype = 'Supplier'
+              AND dl.link_name = %s
+              AND addr.disabled = 0
+            ORDER BY addr.creation DESC
+            LIMIT 1
+        """, (supplier,), as_dict=True)
+
+        if supplier_address:
+            result["dispatch_address"] = supplier_address[0].name
+
+    return result
 
 # import frappe
 
