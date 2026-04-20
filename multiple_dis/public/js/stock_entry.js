@@ -21,10 +21,10 @@ function patch_get_items(frm) {
 
     frm.cscript.get_items = function () {
 
-        console.log("get_items triggered");
+        // console.log("get_items triggered");
 
         if (frm.doc.custom_bom_quantity_fixed) {
-            console.log("BOM recalculation blocked.");
+            // console.log("BOM recalculation blocked.");
             return;
         }
 
