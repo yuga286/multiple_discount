@@ -214,20 +214,20 @@
 //         qty / cf
 //     );
 // }
-// function reverse_qty_from_alternate(frm, cdt, cdn) {
-//     let row = locals[cdt][cdn];
-//     if (!row) return;
+function reverse_qty_from_alternate(frm, cdt, cdn) {
+    let row = locals[cdt][cdn];
+    if (!row) return;
 
-//     let alt_qty = flt(row.alternate_qty);
-//     let cf = flt(row.alternate_uom_conversion_factor);
-//     if (!alt_qty || !cf) return;
+    let alt_qty = flt(row.alternate_qty);
+    let cf = flt(row.alternate_uom_conversion_factor);
+    if (!alt_qty || !cf) return;
 
-//     let qty = Math.round(alt_qty * cf);
-//     // console.log("Reverse Qty from Alternate → Alt Qty:", alt_qty, "CF:", cf, "Qty:", qty);
-//     // IMPORTANT: only set qty
-//     // qty event will handle everything else
-//     frappe.model.set_value(cdt, cdn, "qty", alt_qty * cf);
-// }
+    let qty = Math.round(alt_qty * cf);
+    // console.log("Reverse Qty from Alternate → Alt Qty:", alt_qty, "CF:", cf, "Qty:", qty);
+    // IMPORTANT: only set qty
+    // qty event will handle everything else
+    frappe.model.set_value(cdt, cdn, "qty", alt_qty * cf);
+}
 
 // function set_secondary_uom(frm, cdt, cdn) {
 //     let row = locals[cdt][cdn];
@@ -267,26 +267,26 @@
 // }
 
 
-// function recalc_secondary_uom(frm, cdt, cdn) {
-//     let row = locals[cdt][cdn];
-//     if (!row || !row.item_code) return;
+function recalc_secondary_uom(frm, cdt, cdn) {
+    let row = locals[cdt][cdn];
+    if (!row || !row.item_code) return;
 
-//     let qty = flt(row.qty);
-//     if (!qty) {
-//         frappe.model.set_value(cdt, cdn, "alternate_qty", 0);
-//         return;
-//     }
+    let qty = flt(row.qty);
+    if (!qty) {
+        frappe.model.set_value(cdt, cdn, "alternate_qty", 0);
+        return;
+    }
 
-//     let cf = flt(row.alternate_uom_conversion_factor);
-//     if (!cf) return;
-//     // console.log("Recalc Secondary UOM → Qty:", qty, "CF:", cf);
-//     frappe.model.set_value(
-//         cdt,
-//         cdn,
-//         "alternate_qty",
-//         qty / cf
-//     );
-// }
+    let cf = flt(row.alternate_uom_conversion_factor);
+    if (!cf) return;
+    // console.log("Recalc Secondary UOM → Qty:", qty, "CF:", cf);
+    frappe.model.set_value(
+        cdt,
+        cdn,
+        "alternate_qty",
+        qty / cf
+    );
+}
 
 // // code for the address
 // function handle_series_change(frm) {
@@ -340,85 +340,85 @@
 // // mrp auto filling
 
 
-// frappe.ui.form.on("Sales Order Item", {
-//     item_code: function(frm, cdt, cdn) {
-//         let row = locals[cdt][cdn];
+frappe.ui.form.on("Sales Order Item", {
+    item_code: function(frm, cdt, cdn) {
+        let row = locals[cdt][cdn];
 
-//         if (!row.item_code) return;
+        if (!row.item_code) return;
 
-//         frappe.db.get_list("Item Price", {
-//             filters: {
-//                 item_code: row.item_code
-//             },
-//             fields: ["name", "price_list", "custom_mrp"],
-//         }).then(res => {
+        frappe.db.get_list("Item Price", {
+            filters: {
+                item_code: row.item_code
+            },
+            fields: ["name", "price_list", "custom_mrp"],
+        }).then(res => {
 
-//             //  Take first record OR filter by MRP
-//             let mrp_row = res.find(d => d.price_list === "MRP") || res[0];
+            //  Take first record OR filter by MRP
+            let mrp_row = res.find(d => d.price_list === "MRP") || res[0];
 
-//             frappe.model.set_value(cdt, cdn, "custom_mrp", mrp_row.custom_mrp || 0);
-
-        
-
-//         }).catch(err => {
-//             console.error("Error:", err);
-//         });
-//     }
-// });
-
-
-// frappe.ui.form.on("Delivery Note Item", {
-//     item_code: function(frm, cdt, cdn) {
-//         let row = locals[cdt][cdn];
-
-//         if (!row.item_code) return;
-
-//         frappe.db.get_list("Item Price", {
-//             filters: {
-//                 item_code: row.item_code
-//             },
-//             fields: ["name", "price_list", "custom_mrp"],
-//         }).then(res => {
-
-//             //  Take first record OR filter by MRP
-//             let mrp_row = res.find(d => d.price_list === "MRP") || res[0];
-
-//             frappe.model.set_value(cdt, cdn, "custom_mrp", mrp_row.custom_mrp || 0);
+            frappe.model.set_value(cdt, cdn, "custom_mrp", mrp_row.custom_mrp || 0);
 
         
 
-//         }).catch(err => {
-//             console.error("Error:", err);
-//         });
-//     }
-// });
+        }).catch(err => {
+            console.error("Error:", err);
+        });
+    }
+});
 
 
-// frappe.ui.form.on("Sales Invoice Item", {
-//     item_code: function(frm, cdt, cdn) {
-//         let row = locals[cdt][cdn];
+frappe.ui.form.on("Delivery Note Item", {
+    item_code: function(frm, cdt, cdn) {
+        let row = locals[cdt][cdn];
 
-//         if (!row.item_code) return;
+        if (!row.item_code) return;
 
-//         frappe.db.get_list("Item Price", {
-//             filters: {
-//                 item_code: row.item_code
-//             },
-//             fields: ["name", "price_list", "custom_mrp"],
-//         }).then(res => {
+        frappe.db.get_list("Item Price", {
+            filters: {
+                item_code: row.item_code
+            },
+            fields: ["name", "price_list", "custom_mrp"],
+        }).then(res => {
 
-//             //  Take first record OR filter by MRP
-//             let mrp_row = res.find(d => d.price_list === "MRP") || res[0];
+            //  Take first record OR filter by MRP
+            let mrp_row = res.find(d => d.price_list === "MRP") || res[0];
 
-//             frappe.model.set_value(cdt, cdn, "custom_mrp", mrp_row.custom_mrp || 0);
+            frappe.model.set_value(cdt, cdn, "custom_mrp", mrp_row.custom_mrp || 0);
 
         
 
-//         }).catch(err => {
-//             console.error("Error:", err);
-//         });
-//     }
-// });
+        }).catch(err => {
+            console.error("Error:", err);
+        });
+    }
+});
+
+
+frappe.ui.form.on("Sales Invoice Item", {
+    item_code: function(frm, cdt, cdn) {
+        let row = locals[cdt][cdn];
+
+        if (!row.item_code) return;
+
+        frappe.db.get_list("Item Price", {
+            filters: {
+                item_code: row.item_code
+            },
+            fields: ["name", "price_list", "custom_mrp"],
+        }).then(res => {
+
+            //  Take first record OR filter by MRP
+            let mrp_row = res.find(d => d.price_list === "MRP") || res[0];
+
+            frappe.model.set_value(cdt, cdn, "custom_mrp", mrp_row.custom_mrp || 0);
+
+        
+
+        }).catch(err => {
+            console.error("Error:", err);
+        });
+    }
+});
 
 
 
@@ -703,64 +703,64 @@ function set_secondary_uom(frm, cdt, cdn) {
         }
     });
 }
-function recalc_secondary_uom(frm, cdt, cdn) {
+// function recalc_secondary_uom(frm, cdt, cdn) {
 
-    let row = locals[cdt][cdn];
-    if (!row) return;
+//     let row = locals[cdt][cdn];
+//     if (!row) return;
 
-    let qty = flt(row.qty);
-    let cf = flt(row.alternate_uom_conversion_factor);
+//     let qty = flt(row.qty);
+//     let cf = flt(row.alternate_uom_conversion_factor);
 
-    if (!qty || !cf) {
-        frappe.model.set_value(cdt, cdn, "alternate_qty", 0);
-        return;
-    }
+//     if (!qty || !cf) {
+//         frappe.model.set_value(cdt, cdn, "alternate_qty", 0);
+//         return;
+//     }
 
-    frappe.model.set_value(cdt, cdn, "alternate_qty", qty / cf);
-}
+//     frappe.model.set_value(cdt, cdn, "alternate_qty", qty / cf);
+// }
 
 
-function reverse_qty_from_alternate(frm, cdt, cdn) {
+// function reverse_qty_from_alternate(frm, cdt, cdn) {
 
-    let row = locals[cdt][cdn];
-    if (!row) return;
+//     let row = locals[cdt][cdn];
+//     if (!row) return;
 
-    let alt_qty = flt(row.alternate_qty);
-    let cf = flt(row.alternate_uom_conversion_factor);
+//     let alt_qty = flt(row.alternate_qty);
+//     let cf = flt(row.alternate_uom_conversion_factor);
 
-    if (!alt_qty || !cf) return;
+//     if (!alt_qty || !cf) return;
     
-    console.log("Recalc Secondary UOM → Qty:", qty, "CF:", cf);
+//     console.log("Recalc Secondary UOM → Qty:", qty, "CF:", cf);
 
-    frappe.model.set_value(cdt, cdn, "qty", alt_qty * cf);
-}
+//     frappe.model.set_value(cdt, cdn, "qty", alt_qty * cf);
+// }
 
 
-// ======================================================
-// MRP FETCH
-// ======================================================
-function fetch_mrp(frm, cdt, cdn) {
+// // ======================================================
+// // MRP FETCH
+// // ======================================================
+// function fetch_mrp(frm, cdt, cdn) {
 
-    let row = locals[cdt][cdn];
-    if (!row || !row.item_code) return;
+//     let row = locals[cdt][cdn];
+//     if (!row || !row.item_code) return;
 
-    frappe.db.get_list("Item Price", {
-        filters: {
-            item_code: row.item_code
-        },
-        fields: ["price_list", "custom_mrp"]
-    }).then(res => {
+//     frappe.db.get_list("Item Price", {
+//         filters: {
+//             item_code: row.item_code
+//         },
+//         fields: ["price_list", "custom_mrp"]
+//     }).then(res => {
 
-        if (!res || !res.length) return;
+//         if (!res || !res.length) return;
 
-        let mrp_row = res.find(d => d.price_list === "MRP") || res[0];
+//         let mrp_row = res.find(d => d.price_list === "MRP") || res[0];
 
-        frappe.model.set_value(cdt, cdn, "custom_mrp", mrp_row.custom_mrp || 0);
+//         frappe.model.set_value(cdt, cdn, "custom_mrp", mrp_row.custom_mrp || 0);
 
-    }).catch(err => {
-        console.error("MRP Error:", err);
-    });
-}
+//     }).catch(err => {
+//         console.error("MRP Error:", err);
+//     });
+// }
 
 
 // ======================================================
