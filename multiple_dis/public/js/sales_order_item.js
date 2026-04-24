@@ -142,7 +142,7 @@ function recalc_secondary_uom(frm, cdt, cdn) {
 
     let cf = flt(row.alternate_uom_conversion_factor);
     if (!cf) return;
-    // console.log("Recalc Secondary UOM → Qty:", qty, "CF:", cf);
+    console.log("Recalc Secondary UOM → Qty:", qty, "CF:", cf);
     frappe.model.set_value(
         cdt,
         cdn,
