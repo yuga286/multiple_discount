@@ -118,7 +118,7 @@ def execute(filters=None):
 #     boms = frappe.get_all("BOM", fields=["name"])
 
 #     for bom in boms:
-#         # 🔹 BOM Row
+#         #  BOM Row
 #         data.append({
 #             "name": bom.name,
 #             "parent": "",
@@ -133,7 +133,7 @@ def execute(filters=None):
 #         )
 
 #         for wo in work_orders:
-#             # 🔹 Work Order Row
+#             #  Work Order Row
 #             data.append({
 #                 "name": wo.name,
 #                 "parent": bom.name,
@@ -141,7 +141,7 @@ def execute(filters=None):
 #                 "indent": 1
 #             })
 
-#             # 🔹 Adjustment Data
+#             #  Adjustment Data
 #             adjustments = frappe.get_all(
 #                 "Work Order Adjustment",
 #                 filters={"parent": wo.name},
@@ -153,7 +153,7 @@ def execute(filters=None):
 #             for adj in adjustments:
 #                 adj_map[adj.item_code] = adj.qty or 0
 
-#             # 🔹 Stock Entry Data
+#             #  Stock Entry Data
 #             se_data = frappe.db.sql("""
 #                 SELECT
 #                     sed.item_code,
@@ -172,7 +172,7 @@ def execute(filters=None):
 #             for d in se_data:
 #                 se_map[d.item_code] = d.qty or 0
 
-#             # 🔥 MAIN LOGIC → LOOP ON STOCK ENTRY ITEMS
+#             # MAIN LOGIC → LOOP ON STOCK ENTRY ITEMS
 #             for item_code, se_qty in se_map.items():
 
 #                 actual = adj_map.get(item_code, 0)  # if no adjustment → 0
@@ -200,7 +200,7 @@ def execute(filters=None):
 #             #         "label": item_code,
 #             #         "actual_qty": actual,
 #             #         "se_qty": se_qty,
-#             #         "difference": actual,  # 👈 THIS is your "Excess Output Qty"
+#             #         "difference": actual,  # THIS is your "Excess Output Qty"
 #             #         "indent": 2
 #             #     })
 

@@ -41,22 +41,54 @@ def get_base_price_discount(item_code, selling_price_list, company):
     }
 
 
+# @frappe.whitelist()
+# def get_secondary_uom(item_code):
+#     if not item_code:
+#         return {}
+ 
+#     row = frappe.db.get_value(
+#         "UOM Conversion Detail",
+#         {
+#             "parent": item_code,
+#             "secondary_uom": 1
+#         },
+#         ["uom", "conversion_factor"],
+#         as_dict=1
+#     )
+ 
+#     return row or {}
+
+
+import frappe
+ 
 @frappe.whitelist()
 def get_secondary_uom(item_code):
     if not item_code:
         return {}
  
-    row = frappe.db.get_value(
+    rows = frappe.get_all(
         "UOM Conversion Detail",
-        {
-            "parent": item_code,
-            "secondary_uom": 1
-        },
-        ["uom", "conversion_factor"],
-        as_dict=1
+        filters={"parent": item_code},
+        fields=["uom", "conversion_factor", "secondary_uom", "custom_secondary_uom"],
+        order_by="idx asc"
     )
  
-    return row or {}
+    for row in rows:
+        if row.get("custom_secondary_uom") or row.get("secondary_uom"):
+            return {
+                "uom": row.uom,
+                "conversion_factor": row.conversion_factor
+            }
+ 
+    # fallback first factor > 1
+    for row in rows:
+        if float(row.conversion_factor or 0) != 1:
+            return {
+                "uom": row.uom,
+                "conversion_factor": row.conversion_factor
+            }
+ 
+    return {}
 
 
 # working code perfect

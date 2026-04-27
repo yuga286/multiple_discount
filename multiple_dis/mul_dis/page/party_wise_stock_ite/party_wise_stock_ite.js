@@ -8,7 +8,7 @@
 
 frappe.pages["party_wise_stock_ite"].on_page_load = function (wrapper) {
 
-    // 🔥 define function properly
+    // define function properly
     function add_styles() {
         if (!document.getElementById("custom-report-style")) {
             const style = document.createElement("style");
@@ -44,7 +44,7 @@ frappe.pages["party_wise_stock_ite"].on_page_load = function (wrapper) {
         }
     }
 
-    // 🔥 CALL IT (you forgot this)
+    // CALL IT (you forgot this)
     add_styles();
 
     // load page
@@ -95,7 +95,7 @@ class PartyWiseSalesPage {
 
 		let html = `<table class="table table-bordered">`;
 
-		// 🔥 HEADER
+		//  HEADER
 		html += `<thead>`;
 
 		// row 1
@@ -120,7 +120,7 @@ class PartyWiseSalesPage {
 
 		html += `</thead>`;
 
-		// 🔥 BODY
+		//  BODY
 		html += `<tbody>`;
 
 		Object.keys(this.data).forEach(cust => {
