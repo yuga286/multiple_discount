@@ -125,7 +125,7 @@ function reverse_qty_from_alternate(frm, cdt, cdn) {
     let qty = Math.round(alt_qty * cf);
     
     // qty event will handle everything else
-    frappe.model.set_value(cdt, cdn, "qty", alt_qty * cf);
+    frappe.model.set_value(cdt, cdn, "qty", qty);
 }
 
 
