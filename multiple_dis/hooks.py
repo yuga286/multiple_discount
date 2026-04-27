@@ -9,13 +9,14 @@ doctype_js = {
     "Sales Order": "public/js/sales_order_item.js",
     "Sales Invoice": "public/js/sales_order_item.js",
     "Delivery Note": "public/js/sales_order_item.js",
+    "Delivery Note": "public/js/purchase_order.js",
     "Stock Entry": "public/js/stock_entry.js",
     "Purchase Order": "public/js/purchase_order.js"
 }
 override_doctype_class = {
     "Stock Entry": "multiple_dis.overrides.stock_entry.CustomStockEntry"
-    # "Trial Balance": "multiple_dis.overrides.custom_trial_balance.CustomTrialBalance"
 }
+
 # doc_events = {
 #     "*": {
 #         "on_update": "multiple_dis.overrides.custom_trial_balance.test"
@@ -28,7 +29,16 @@ override_doctype_class = {
 doc_events = {
     "Stock Entry": {
         "before_save": "multiple_dis.api.freeze_item_qty"
+    },
+    "Sales Order": {
+        "before_save": "multiple_dis.overrides.sales_controller.recalc_discounts"
     }
+    # "Delivery Note": {
+    #     "before_save": "multiple_dis.overrides.sales_controller.recalc_discounts"
+    # },
+    # "Sales Invoice": {
+    #     "before_save": "multiple_dis.overrides.sales_controller.recalc_discounts"
+    # }
     # "*": {
     #     "on_update": "multiple_dis.overrides.custom_trial_balance.test"
     # }

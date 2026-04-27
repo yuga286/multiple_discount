@@ -1,6 +1,5 @@
 
 function handle_po_series_change(frm) {
-    // console.log("Handling PO series change...");
     if (!frm.doc.naming_series || !frm.doc.company) return;
 
     let city = get_city_from_po_series(frm.doc.naming_series);
@@ -14,18 +13,7 @@ function handle_po_series_change(frm) {
             supplier: frm.doc.supplier || null
         },
         callback(r) {
-            // console.log("PO API response:", r.message);
-            // if (!r.message) return;
-
-            // if (r.message.company_address) {
-            //     frm.set_value("company_address", r.message.company_address);
-            //     frm.set_value("shipping_address", r.message.shipping_address);
-            //     frm.set_value("billing_address", r.message.dispatch_address);
-            // }
-
-            // if (r.message.dispatch_address) {
-            //     frm.set_value("supplier_address", r.message.dispatch_address);
-            // }
+            
 
             frappe.run_serially([
                 () => {
@@ -76,3 +64,76 @@ frappe.ui.form.on("Purchase Order", {
         handle_po_series_change(frm);
     }
 });
+
+
+
+
+frappe.ui.form.on('Purchase Invoice', {
+    refresh(frm) {
+        if (frm.doc.items && frm.doc.items.length > 0) {
+            let pr = frm.doc.items[0].purchase_receipt;
+
+            if (pr && (!frm.doc.bill_no || !frm.doc.bill_date)) {
+                frappe.db.get_value('Purchase Receipt', pr, [
+                    'supplier_delivery_note',
+                    'posting_date'
+                ]).then(r => {
+
+                    if (r.message) {
+
+                        // bill_no mapping
+                        if (!frm.doc.bill_no && r.message.supplier_delivery_note) {
+                            frm.set_value('bill_no', r.message.supplier_delivery_note);
+                        }
+
+                        // bill_date mapping
+                        if (!frm.doc.bill_date && r.message.posting_date) {
+                            frm.set_value('bill_date', r.message.posting_date);
+                        }
+
+                    }
+                });
+            }
+        }
+    }
+});
+
+
+
+// frappe.ui.form.on('Delivery Note', {
+    
+//     refresh: function(frm) {
+//         // console.log("start");
+//         if (frm.doc.custom_sale_order_type === "Bill of Supply") {
+//             frm.set_value("custom_gst_treatment", "Exempted");
+//         }
+//     },
+
+//     custom_sale_order_type: function(frm) {
+//         if (frm.doc.custom_sale_order_type === "Bill of Supply") {
+//             frm.set_value("custom_gst_treatment", "Exempted");
+//         }
+//     }
+// });
+
+
+
+frappe.ui.form.on('Delivery Note', {
+    refresh: function(frm) {
+        set_gst(frm);
+    },
+
+    onload: function(frm) {
+        set_gst(frm);
+    },
+
+    custom_sale_order_type: function(frm) {
+        set_gst(frm);
+    }
+});
+
+function set_gst(frm) {
+    if (frm.doc.custom_sale_order_type === "Bill of Supply") {
+        frm.set_value("custom_gst_treatment", "Exempted");
+    }
+}

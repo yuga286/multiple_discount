@@ -292,3 +292,94 @@ def get_debtor_summary(company, from_date, to_date):
     html += "</table>"
 
     return html
+
+
+
+
+
+
+import frappe
+ 
+@frappe.whitelist()
+def get_item_details(item_code, selling_price_list, company):
+    """
+    Returns discount + secondary UOM + MRP in a single DB round trip.
+    Replaces: get_base_price_discount + get_secondary_uom + Item Price fetch
+    """
+    result = {
+        "discount_percentage": 0,
+        "uom": None,
+        "conversion_factor": None,
+        "mrp": 0
+    }
+ 
+    if not item_code:
+        return result
+ 
+    # ── 1. Pricing Rule (your existing SQL, unchanged) ──────────────────
+    pricing_rule = frappe.db.sql("""
+        SELECT
+            pr.discount_percentage,
+            pr.rate_or_discount
+        FROM `tabPricing Rule` pr
+        INNER JOIN `tabPricing Rule Item Code` prd
+            ON prd.parent = pr.name
+        WHERE
+            pr.selling = 1
+            AND pr.disable = 0
+            AND pr.company = %s
+            AND pr.for_price_list = %s
+            AND prd.item_code = %s
+        ORDER BY pr.priority DESC, pr.creation DESC
+        LIMIT 1
+    """, (company, selling_price_list, item_code), as_dict=True)
+ 
+    if pricing_rule:
+        result["discount_percentage"] = pricing_rule[0].get("discount_percentage", 0)
+ 
+    # ── 2. Secondary UOM (stop at first match, no full scan) ────────────
+    uom_rows = frappe.db.sql("""
+        SELECT uom, conversion_factor, secondary_uom, custom_secondary_uom
+        FROM `tabUOM Conversion Detail`
+        WHERE parent = %s
+        ORDER BY idx ASC
+    """, (item_code,), as_dict=True)
+ 
+    secondary_uom = None
+    fallback_uom = None
+ 
+    for row in uom_rows:
+        if row.get("custom_secondary_uom") or row.get("secondary_uom"):
+            secondary_uom = row
+            break
+        if not fallback_uom and float(row.conversion_factor or 0) != 1:
+            fallback_uom = row
+ 
+    chosen = secondary_uom or fallback_uom
+    if chosen:
+        result["uom"] = chosen["uom"]
+        result["conversion_factor"] = chosen["conversion_factor"]
+ 
+    # ── 3. MRP (single targeted query) ──────────────────────────────────
+    mrp = frappe.db.get_value(
+        "Item Price",
+        {"item_code": item_code, "price_list": "MRP"},
+        "custom_mrp"
+    )
+    if mrp is None:
+        # fallback: first available price
+        mrp = frappe.db.get_value(
+            "Item Price",
+            {"item_code": item_code},
+            "custom_mrp"
+        )
+ 
+    result["mrp"] = mrp or 0
+ 
+    return result
+
+
+
+
+
+
