@@ -32,13 +32,13 @@ doc_events = {
     },
     "Sales Order": {
         "before_save": "multiple_dis.overrides.sales_controller.recalc_discounts"
+    },
+    "Delivery Note": {
+        "before_save": "multiple_dis.overrides.sales_controller.recalc_discounts"
+    },
+    "Sales Invoice": {
+        "before_save": "multiple_dis.overrides.sales_controller.recalc_discounts"
     }
-    # "Delivery Note": {
-    #     "before_save": "multiple_dis.overrides.sales_controller.recalc_discounts"
-    # },
-    # "Sales Invoice": {
-    #     "before_save": "multiple_dis.overrides.sales_controller.recalc_discounts"
-    # }
     # "*": {
     #     "on_update": "multiple_dis.overrides.custom_trial_balance.test"
     # }
