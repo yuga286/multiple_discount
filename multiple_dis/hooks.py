@@ -9,7 +9,7 @@ doctype_js = {
     "Sales Order": "public/js/sales_order_item.js",
     "Sales Invoice": "public/js/sales_order_item.js",
     "Delivery Note": "public/js/sales_order_item.js",
-    "Delivery Note": "public/js/purchase_order.js",
+    # "Delivery Note": "public/js/purchase_order.js",
     "Stock Entry": "public/js/stock_entry.js",
     "Purchase Order": "public/js/purchase_order.js"
 }
