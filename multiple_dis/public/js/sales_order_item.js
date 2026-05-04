@@ -28,53 +28,6 @@ const SERIES_CITY_MAP = {
             fetch_item_details(frm, cdt, cdn);  
         },
 
-        // When qty changes → recalc UOM + re-fetch discount + recalc row
-        // qty(frm, cdt, cdn) {
-        //     // Update alternate_qty first, then trigger rate recalculation
-        //     let row = locals[cdt][cdn];
-        //     if (row && row.alternate_uom_conversion_factor) {
-        //         let cf = flt(row.alternate_uom_conversion_factor);
-        //         let qty_val = flt(row.qty);
-        //         frappe.model.set_value(cdt, cdn, "alternate_qty", qty_val ? qty_val / cf : 0).then(() => {
-        //             recalc_row(frm, cdt, cdn);
-        //             fetch_pricing_discount_only(frm, cdt, cdn);
-        //         });
-        //     } else {
-        //         recalc_row(frm, cdt, cdn);
-        //         fetch_pricing_discount_only(frm, cdt, cdn);
-        //     }
-        // },
-        
-
-        // qty(frm, cdt, cdn) {
-        //     let updating_alt_qty = false;
-        //     if (updating_alt_qty) return;
-
-        //     let row = locals[cdt][cdn];
-
-        //     if (row && row.alternate_uom_conversion_factor) {
-        //         let cf = flt(row.alternate_uom_conversion_factor);
-        //         let qty_val = flt(row.qty);
-
-        //         updating_alt_qty = true;
-
-        //         frappe.model.set_value(
-        //             cdt,
-        //             cdn,
-        //             "alternate_qty",
-        //             qty_val ? qty_val / cf : 0
-        //         ).then(() => {
-        //             updating_alt_qty = false;
-
-        //             recalc_row(frm, cdt, cdn);
-        //             fetch_pricing_discount_only(frm, cdt, cdn);
-        //         });
-
-        //     } else {
-        //         recalc_row(frm, cdt, cdn);
-        //         fetch_pricing_discount_only(frm, cdt, cdn);
-        //     }
-        // },
 
         qty(frm, cdt, cdn) {
             let row = locals[cdt][cdn];

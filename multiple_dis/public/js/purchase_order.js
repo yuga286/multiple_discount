@@ -100,22 +100,6 @@ frappe.ui.form.on('Purchase Invoice', {
 
 
 
-// frappe.ui.form.on('Delivery Note', {
-    
-//     refresh: function(frm) {
-//         // console.log("start");
-//         if (frm.doc.custom_sale_order_type === "Bill of Supply") {
-//             frm.set_value("custom_gst_treatment", "Exempted");
-//         }
-//     },
-
-//     custom_sale_order_type: function(frm) {
-//         if (frm.doc.custom_sale_order_type === "Bill of Supply") {
-//             frm.set_value("custom_gst_treatment", "Exempted");
-//         }
-//     }
-// });
-
 
 
 frappe.ui.form.on('Delivery Note', {

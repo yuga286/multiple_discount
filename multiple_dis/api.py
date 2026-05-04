@@ -1,6 +1,3 @@
-
-
-
 import frappe
 @frappe.whitelist()
 def get_base_price_discount(item_code, selling_price_list, company):
@@ -39,24 +36,6 @@ def get_base_price_discount(item_code, selling_price_list, company):
     return {
         "discount_percentage": pricing_rule[0].get("discount_percentage", 0)
     }
-
-
-# @frappe.whitelist()
-# def get_secondary_uom(item_code):
-#     if not item_code:
-#         return {}
- 
-#     row = frappe.db.get_value(
-#         "UOM Conversion Detail",
-#         {
-#             "parent": item_code,
-#             "secondary_uom": 1
-#         },
-#         ["uom", "conversion_factor"],
-#         as_dict=1
-#     )
- 
-#     return row or {}
 
 
 import frappe
@@ -180,58 +159,6 @@ def get_addresses_for_purchase_order(city=None, company=None, supplier=None):
             result["dispatch_address"] = supplier_address[0].name
 
     return result
-
-# import frappe
-
-# def freeze_item_qty(doc, method):
-#     if not doc.custom_bom_quantity_fixed:
-#         return
-
-#     if not doc.get("items"):
-#         return
-
-#     # Fetch previous version from DB
-#     old_doc = None
-#     if doc.name:
-#         old_doc = frappe.get_doc("Stock Entry", doc.name)
-
-#     if not old_doc:
-#         return
-
-#     # Restore item qty from old saved version
-#     old_qty_map = {}
-#     for d in old_doc.items:
-#         old_qty_map[d.name] = d.qty
-
-#     for d in doc.items:
-#         if d.name in old_qty_map:
-#             d.qty = old_qty_map[d.name]
-
-
-# import frappe
-
-# def freeze_item_qty(doc, method):
-#     if not doc.custom_bom_quantity_fixed:
-#         return
-
-#     if not doc.name:
-#         return
-    
-#     # fetch previous saved version
-#     old_doc = frappe.get_doc("Stock Entry", doc.name)
-#     # frappe.msgprint(f"old data: {old_doc}")
-    
-#     # if not self.is_new():
-#     #     old_doc = self.get_doc_before_save()
-
-#     old_qty_map = {}
-#     for row in old_doc.items:
-#         old_qty_map[row.name] = row.qty
-
-#     for row in doc.items:
-#         if row.name in old_qty_map:
-#             row.qty = old_qty_map[row.name]
-
 
 import frappe
 
@@ -378,126 +305,3 @@ def get_item_details(item_code, selling_price_list, company):
  
     return result
 
-
-
-
-
-
-# import frappe
-# from frappe.utils.pdf import get_pdf
-# @frappe.whitelist()
-# def send_pdf_on_whatsapp(doctype, docname, mobile_no, template_name, account=None):
-#     import base64
-#     from frappe.utils.pdf import get_pdf
-
-#     # Use Frappe's HTML print which resolves assets locally
-#     html = frappe.get_print(doctype, docname, print_format=None)
-    
-#     pdf_content = get_pdf(html, options={
-#         "load-error-handling": "ignore",
-#         "load-media-error-handling": "ignore",
-#         "disable-javascript": None,
-#     })
-
-#     # Save as file
-#     file_name = f"{docname}.pdf"
-#     file_doc = frappe.get_doc({
-#         "doctype": "File",
-#         "file_name": file_name,
-#         "content": pdf_content,
-#         "is_private": 1,
-#         "attached_to_doctype": doctype,
-#         "attached_to_name": docname,
-#     })
-#     file_doc.insert(ignore_permissions=True)
-
-#     # Send WhatsApp message
-#     wa_message = frappe.get_doc({
-#         "doctype": "WhatsApp Message",
-#         "to": mobile_no,
-#         "message_type": "Template",
-#         "message": template_name,
-#         "whatsapp_account": account,
-#         "attach": file_doc.file_url,
-#         "reference_document_type": doctype,
-#         "reference_document": docname,
-#     })
-#     wa_message.insert(ignore_permissions=True)
-#     wa_message.submit()
-
-#     return {"status": "success", "message": "WhatsApp PDF sent!"}
-
-import frappe
-import json
-
-@frappe.whitelist()
-def send_pdf_whatsapp(doctype, docname, mobile_no, template_name, parameters=None):
-    """
-    Enqueue the actual sending to background — fixes timeout.
-    """
-    frappe.enqueue(
-        "multiple_dis.api.send_pdf_whatsapp._send_in_background",
-        queue="short",
-        timeout=120,
-        doctype=doctype,
-        docname=docname,
-        mobile_no=mobile_no,
-        template_name=template_name,
-        parameters=parameters
-    )
-    return {"status": "queued", "message": "Sending in background..."}
-
-
-def _send_in_background(doctype, docname, mobile_no, template_name, parameters=None):
-    """
-    Actual logic runs in background worker — no timeout risk.
-    """
-    try:
-        # 1. Generate PDF
-        pdf_content = frappe.get_print(doctype, docname, as_pdf=True)
-
-        # 2. Save as public file
-        file_doc = frappe.get_doc({
-            "doctype": "File",
-            "file_name": f"{docname}.pdf",
-            "attached_to_doctype": doctype,
-            "attached_to_name": docname,
-            "content": pdf_content,
-            "is_private": 0
-        })
-        file_doc.insert(ignore_permissions=True)
-        frappe.db.commit()
-
-        # 3. Parse body params
-        params = json.loads(parameters) if parameters else []
-
-        # 4. Build header param with PDF URL
-        site_url = frappe.utils.get_url()
-        pdf_url = f"{site_url}{file_doc.file_url}"
-
-        header_params = json.dumps([{
-            "type": "document",
-            "document": {
-                "link": pdf_url,
-                "filename": f"{docname}.pdf"
-            }
-        }])
-
-        # 5. Create WhatsApp Message — frappe_whatsapp sends on insert
-        wa_msg = frappe.get_doc({
-            "doctype": "WhatsApp Message",
-            "type": "Outgoing",
-            "to": mobile_no,
-            "use_template": 1,
-            "template": template_name,
-            "template_parameters": json.dumps(params),
-            "template_header_parameters": header_params,
-            "attach": file_doc.file_url,
-            "reference_doctype": doctype,
-            "reference_name": docname,
-        })
-        wa_msg.insert(ignore_permissions=True)
-        frappe.db.commit()
-
-    except Exception as e:
-        frappe.log_error(frappe.get_traceback(), "WhatsApp PDF Send Failed")
