@@ -15,7 +15,7 @@
 // };
 
 
-frappe.query_reports["BOM Work Order Tree"] = {
+frappe.query_reports["Excess Output Report"] = {
     tree: true,
     name_field: "name",
     parent_field: "parent",

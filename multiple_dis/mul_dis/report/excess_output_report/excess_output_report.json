@@ -1,6 +1,6 @@
 {
   "doctype": "Report",
-  "name": "BOM Work Order Tree",
+  "name": "Excess Output Report",
   "ref_doctype": "BOM",
   "report_type": "Script Report",
   "is_standard": "Yes",

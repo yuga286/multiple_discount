@@ -5,14 +5,32 @@ app_description = "multiple discout and uom"
 app_email = "vigisolvo@gmail.com"
 app_license = "mit"
 
+app_include_js = []
+
 doctype_js = {
+    "Sales Invoice": [
+        "public/js/sales_invoice.js",
+        "public/js/sales_order_item.js"
+    ],
     "Sales Order": "public/js/sales_order_item.js",
-    "Sales Invoice": "public/js/sales_order_item.js",
-    "Delivery Note": "public/js/sales_order_item.js",
-    # "Delivery Note": "public/js/purchase_order.js",
+    "Delivery Note":["public/js/sales_order_item.js",
+                     "public/js/purchase_order.js"],
     "Stock Entry": "public/js/stock_entry.js",
     "Purchase Order": "public/js/purchase_order.js"
 }
+
+# doctype_js = {
+#     "Sales Invoice": "public/js/sales_invoice.js"
+# }
+
+# doctype_js = {
+#     "Sales Order": "public/js/sales_order_item.js",
+#     "Sales Invoice": "public/js/sales_order_item.js",
+#     "Delivery Note": "public/js/sales_order_item.js",
+#     # "Delivery Note": "public/js/purchase_order.js",
+#     "Stock Entry": "public/js/stock_entry.js",
+#     "Purchase Order": "public/js/purchase_order.js"
+# }
 override_doctype_class = {
     "Stock Entry": "multiple_dis.overrides.stock_entry.CustomStockEntry"
 }

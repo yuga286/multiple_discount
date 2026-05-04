@@ -1,8 +1,8 @@
-# import frappe
+import frappe
 
 # @frappe.whitelist()
 # def get_data():
-#     # 🔹 Get items
+
 #     items = frappe.db.sql("""
 #         SELECT DISTINCT sii.item_code
 #         FROM `tabSales Invoice Item` sii
@@ -12,7 +12,6 @@
 
 #     item_list = [d.item_code for d in items]
 
-#     # 🔹 Get sales data
 #     raw = frappe.db.sql("""
 #         SELECT
 #             si.customer,
@@ -25,14 +24,13 @@
 #         GROUP BY si.customer, sii.item_code
 #     """, as_dict=1)
 
-#     # 🔹 Pivot
 #     customer_map = {}
 
 #     for row in raw:
 #         cust = row.customer
 
 #         if cust not in customer_map:
-#             customer_map[cust] = {"customer": cust}
+#             customer_map[cust] = {}
 #             for item in item_list:
 #                 customer_map[cust][item] = {"qty": 0, "amt": 0}
 
@@ -43,53 +41,196 @@
 #         "items": item_list,
 #         "data": customer_map
 #     }
+    
+# @frappe.whitelist()
+# def get_data():
+
+#     items = frappe.db.sql("""
+#         SELECT DISTINCT sii.item_code
+#         FROM `tabSales Invoice Item` sii
+#         INNER JOIN `tabSales Invoice` si ON si.name = sii.parent
+#         WHERE si.docstatus = 1
+#     """, as_dict=1)
+
+#     item_list = [d.item_code for d in items]
+
+#     # FETCH UOM HERE (you missed this completely)
+#     item_uoms = frappe.get_all(
+#         "Item",
+#         filters={"name": ["in", item_list]},
+#         fields=["name", "stock_uom"]
+#     )
+   
+
+#     item_uom_map = {d["name"]: d["stock_uom"] for d in item_uoms}
+
+#     raw = frappe.db.sql("""
+#         SELECT
+#             si.customer,
+#             sii.item_code,
+#             SUM(IFNULL(sii.qty,0)) as qty,
+#             SUM(IFNULL(sii.amount,0)) as amount
+#         FROM `tabSales Invoice` si
+#         JOIN `tabSales Invoice Item` sii ON si.name = sii.parent
+#         WHERE si.docstatus = 1
+#         GROUP BY si.customer, sii.item_code
+#     """, as_dict=1)
+
+#     customer_map = {}
+
+#     for row in raw:
+#         cust = row.customer
+
+#         if cust not in customer_map:
+#             customer_map[cust] = {}
+#             for item in item_list:
+#                 customer_map[cust][item] = {"qty": 0, "amt": 0}
+
+#         customer_map[cust][row.item_code]["qty"] += row.qty
+#         customer_map[cust][row.item_code]["amt"] += row.amount
+
+#     return {
+#         "items": item_list,
+#         "data": customer_map,
+#         "uoms": item_uom_map   # now valid
+#     }
+    
+# @frappe.whitelist()
+# def get_data():
+
+#     # 🔹 STEP 1: Get aggregated data
+#     raw = frappe.db.sql("""
+#         SELECT
+#             si.customer,
+#             sii.item_code,
+#             sii.item_name,
+#             SUM(IFNULL(sii.qty,0)) as qty,
+#             SUM(IFNULL(sii.amount,0)) as amount
+#         FROM `tabSales Invoice` si
+#         JOIN `tabSales Invoice Item` sii ON si.name = sii.parent
+#         WHERE si.docstatus = 1
+#         GROUP BY si.customer, sii.item_code, sii.item_name
+#     """, as_dict=1)
+
+#     # 🔹 STEP 2: Prepare item list (use item_name for UI)
+#     item_list = list(set([row.item_name for row in raw if row.item_name]))
+
+#     # 🔹 STEP 3: Get UOM using item_code
+#     item_codes = list(set([row.item_code for row in raw if row.item_code]))
+
+#     item_uoms = frappe.get_all(
+#         "Item",
+#         filters={"name": ["in", item_codes]},
+#         fields=["name", "stock_uom"]
+#     )
+
+#     # map item_code → UOM
+#     code_uom_map = {d["name"]: d["stock_uom"] for d in item_uoms}
+
+#     # 🔹 STEP 4: Map item_name → UOM (IMPORTANT FIX)
+#     item_uom_map = {}
+#     for row in raw:
+#         uom = code_uom_map.get(row.item_code)
+#         if uom:
+#             item_uom_map[row.item_name] = uom
+
+#     # 🔹 STEP 5: Build customer-wise structure
+#     customer_map = {}
+
+#     for row in raw:
+#         cust = row.customer
+#         item = row.item_name
+
+#         if cust not in customer_map:
+#             customer_map[cust] = {}
+#             for i in item_list:
+#                 customer_map[cust][i] = {"qty": 0, "amt": 0}
+                
+#         # build mapping: item_code → item_name
+#         item_code_name_map = {}
+
+#         for row in raw:
+#             if row.item_code and row.item_name:
+#                 item_code_name_map[row.item_code] = row.item_name
+
+#         customer_map[cust][item]["qty"] += row.qty
+#         customer_map[cust][item]["amt"] += row.amount
+
+#     # 🔹 FINAL RETURN
+#     return {
+#         "items": item_list,
+#         "data": customer_map,
+#         "uoms": item_uom_map,
+#         "item_map": item_code_name_map
+#     }
 
 
-import frappe
 
 @frappe.whitelist()
 def get_data():
-
-    items = frappe.db.sql("""
-        SELECT DISTINCT sii.item_code
-        FROM `tabSales Invoice Item` sii
-        INNER JOIN `tabSales Invoice` si ON si.name = sii.parent
-        WHERE si.docstatus = 1
-    """, as_dict=1)
-
-    item_list = [d.item_code for d in items]
 
     raw = frappe.db.sql("""
         SELECT
             si.customer,
             sii.item_code,
+            sii.item_name,
             SUM(IFNULL(sii.qty,0)) as qty,
             SUM(IFNULL(sii.amount,0)) as amount
         FROM `tabSales Invoice` si
         JOIN `tabSales Invoice Item` sii ON si.name = sii.parent
         WHERE si.docstatus = 1
-        GROUP BY si.customer, sii.item_code
+        GROUP BY si.customer, sii.item_code, sii.item_name
     """, as_dict=1)
 
+    # items (item_name)
+    item_list = list(set([row.item_name for row in raw if row.item_name]))
+
+    # item_code → uom
+    item_codes = list(set([row.item_code for row in raw if row.item_code]))
+
+    item_uoms = frappe.get_all(
+        "Item",
+        filters={"name": ["in", item_codes]},
+        fields=["name", "stock_uom"]
+    )
+
+    code_uom_map = {d["name"]: d["stock_uom"] for d in item_uoms}
+
+    # item_name → uom
+    item_uom_map = {}
+    for row in raw:
+        uom = code_uom_map.get(row.item_code)
+        if uom:
+            item_uom_map[row.item_name] = uom
+
+    # 🔥 CORRECT: build ONCE (outside loop)
+    item_code_name_map = {}
+    for row in raw:
+        if row.item_code and row.item_name:
+            item_code_name_map[row.item_code] = row.item_name
+
+    # customer data
     customer_map = {}
 
     for row in raw:
         cust = row.customer
+        item = row.item_name
 
         if cust not in customer_map:
             customer_map[cust] = {}
-            for item in item_list:
-                customer_map[cust][item] = {"qty": 0, "amt": 0}
+            for i in item_list:
+                customer_map[cust][i] = {"qty": 0, "amt": 0}
 
-        customer_map[cust][row.item_code]["qty"] += row.qty
-        customer_map[cust][row.item_code]["amt"] += row.amount
+        customer_map[cust][item]["qty"] += row.qty
+        customer_map[cust][item]["amt"] += row.amount
 
     return {
         "items": item_list,
-        "data": customer_map
+        "data": customer_map,
+        "uoms": item_uom_map,
+        "item_map": item_code_name_map   # ✅ now correct
     }
-    
-    
+        
 import frappe
 import csv
 import io

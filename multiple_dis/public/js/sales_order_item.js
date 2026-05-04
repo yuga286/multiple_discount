@@ -25,24 +25,71 @@ const SERIES_CITY_MAP = {
         item_code(frm, cdt, cdn) {
             let row = locals[cdt][cdn];
             if (!row || !row.item_code) return;
-            fetch_item_details(frm, cdt, cdn);
+            fetch_item_details(frm, cdt, cdn);  
         },
 
         // When qty changes → recalc UOM + re-fetch discount + recalc row
+        // qty(frm, cdt, cdn) {
+        //     // Update alternate_qty first, then trigger rate recalculation
+        //     let row = locals[cdt][cdn];
+        //     if (row && row.alternate_uom_conversion_factor) {
+        //         let cf = flt(row.alternate_uom_conversion_factor);
+        //         let qty_val = flt(row.qty);
+        //         frappe.model.set_value(cdt, cdn, "alternate_qty", qty_val ? qty_val / cf : 0).then(() => {
+        //             recalc_row(frm, cdt, cdn);
+        //             fetch_pricing_discount_only(frm, cdt, cdn);
+        //         });
+        //     } else {
+        //         recalc_row(frm, cdt, cdn);
+        //         fetch_pricing_discount_only(frm, cdt, cdn);
+        //     }
+        // },
+        
+
+        // qty(frm, cdt, cdn) {
+        //     let updating_alt_qty = false;
+        //     if (updating_alt_qty) return;
+
+        //     let row = locals[cdt][cdn];
+
+        //     if (row && row.alternate_uom_conversion_factor) {
+        //         let cf = flt(row.alternate_uom_conversion_factor);
+        //         let qty_val = flt(row.qty);
+
+        //         updating_alt_qty = true;
+
+        //         frappe.model.set_value(
+        //             cdt,
+        //             cdn,
+        //             "alternate_qty",
+        //             qty_val ? qty_val / cf : 0
+        //         ).then(() => {
+        //             updating_alt_qty = false;
+
+        //             recalc_row(frm, cdt, cdn);
+        //             fetch_pricing_discount_only(frm, cdt, cdn);
+        //         });
+
+        //     } else {
+        //         recalc_row(frm, cdt, cdn);
+        //         fetch_pricing_discount_only(frm, cdt, cdn);
+        //     }
+        // },
+
         qty(frm, cdt, cdn) {
-            // Update alternate_qty first, then trigger rate recalculation
             let row = locals[cdt][cdn];
-            if (row && row.alternate_uom_conversion_factor) {
-                let cf = flt(row.alternate_uom_conversion_factor);
-                let qty_val = flt(row.qty);
-                frappe.model.set_value(cdt, cdn, "alternate_qty", qty_val ? qty_val / cf : 0).then(() => {
-                    recalc_row(frm, cdt, cdn);
-                    fetch_pricing_discount_only(frm, cdt, cdn);
-                });
-            } else {
-                recalc_row(frm, cdt, cdn);
-                fetch_pricing_discount_only(frm, cdt, cdn);
-            }
+
+            setTimeout(() => {
+                if (row && row.alternate_uom_conversion_factor) {
+                    let cf = flt(row.alternate_uom_conversion_factor);
+                    frappe.model.set_value(
+                        cdt,
+                        cdn,
+                        "alternate_qty",
+                        row.qty ? row.qty / cf : 0
+                    );
+                }
+            }, 200); // wait for ERPNext to finish its logic
         },
 
         // When alternate qty changes → reverse calculate main qty
@@ -171,9 +218,12 @@ function apply_item_details(frm, cdt, cdn, data) {
     let { discount_percentage, uom, conversion_factor, mrp } = data;
 
     // Update fields using set_value to trigger Frappe's change detection
-    if (mrp !== undefined) {
-        frappe.model.set_value(cdt, cdn, "custom_mrp", mrp);
-    }
+    // if (mrp !== undefined) {
+    //     frappe.model.set_value(cdt, cdn, "custom_mrp", mrp);
+    // }
+
+    frappe.model.set_value(cdt, cdn, "custom_mrp", mrp);
+
 
     if (uom && conversion_factor) {
         frappe.model.set_value(cdt, cdn, "alternate_uom", uom);
@@ -293,6 +343,7 @@ function recalc_row(frm_or_cdt, cdt_or_cdn, maybe_cdn) {
     let amount_after_d1   = rate_after_d1 * qty;
     let amount_after_d2   = final_rate * qty;
 
+
     // Batch all field updates into one set_value call to:
     // 1. Reduce multiple re-renders to one.
     // 2. Ensure UI sees all calculated values together immediately.
@@ -346,6 +397,7 @@ function recalc_secondary_uom(frm, cdt, cdn) {
 
     // Use set_value to trigger Frappe's change detection and UI update
     let alt_qty_value = qty ? qty / cf : 0;
+    console.log(`Recalculating alternate_qty: qty=${qty}, cf=${cf}, alt_qty=${alt_qty_value}`);
     frappe.model.set_value(cdt, cdn, "alternate_qty", alt_qty_value);
 }
 
