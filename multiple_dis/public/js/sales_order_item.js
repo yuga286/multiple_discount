@@ -170,10 +170,6 @@ function apply_item_details(frm, cdt, cdn, data) {
 
     let { discount_percentage, uom, conversion_factor, mrp } = data;
 
-    // Update fields using set_value to trigger Frappe's change detection
-    // if (mrp !== undefined) {
-    //     frappe.model.set_value(cdt, cdn, "custom_mrp", mrp);
-    // }
 
     frappe.model.set_value(cdt, cdn, "custom_mrp", mrp);
 
