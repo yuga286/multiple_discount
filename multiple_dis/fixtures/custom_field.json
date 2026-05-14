@@ -259,5 +259,35 @@
     "label": "Secondary UOM Conversion Factor",
     "fieldtype": "Data",
     "insert_after": "alternate_uom"
+  },
+  {
+    "doctype": "Custom Field",
+    "name": "Purchase Order Item-discount",
+    "dt": "Purchase Order Item",
+    "fieldname": "discount",
+    "fieldtype": "Percent",
+    "label": "Discount %",
+    "insert_after": "price_list_rate",
+    "default": "0"
+  },
+  {
+    "doctype": "Custom Field",
+    "name": "Purchase Receipt Item-discount",
+    "dt": "Purchase Receipt Item",
+    "fieldname": "discount",
+    "fieldtype": "Percent",
+    "label": "Discount %",
+    "insert_after": "price_list_rate",
+    "default": "0"
+  },
+  {
+    "doctype": "Custom Field",
+    "name": "Purchase Invoice Item-discount",
+    "dt": "Purchase Invoice Item",
+    "fieldname": "discount",
+    "fieldtype": "Percent",
+    "label": "Discount %",
+    "insert_after": "price_list_rate",
+    "default": "0"
   }
 ]

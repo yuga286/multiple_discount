@@ -346,7 +346,7 @@ function recalc_secondary_uom(frm, cdt, cdn) {
 
     // Use set_value to trigger Frappe's change detection and UI update
     let alt_qty_value = qty ? qty / cf : 0;
-    console.log(`Recalculating alternate_qty: qty=${qty}, cf=${cf}, alt_qty=${alt_qty_value}`);
+    // console.log(`Recalculating alternate_qty: qty=${qty}, cf=${cf}, alt_qty=${alt_qty_value}`);
     frappe.model.set_value(cdt, cdn, "alternate_qty", alt_qty_value);
 }
 
@@ -405,4 +405,3 @@ function get_city_from_series(series) {
     }
     return null;
 }
- 

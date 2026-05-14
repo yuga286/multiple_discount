@@ -121,3 +121,204 @@ function set_gst(frm) {
         frm.set_value("custom_gst_treatment", "Exempted");
     }
 }
+
+
+
+// [
+//     "Purchase Order Item",
+//     "Purchase Receipt Item",
+//     "Purchase Invoice Item"
+// ].forEach((doctype) => {
+
+//     frappe.ui.form.on(doctype, {
+
+//         qty(frm, cdt, cdn) {
+//             recalc_discount_amount(frm, cdt, cdn);
+//         },
+
+//         rate(frm, cdt, cdn) {
+//             recalc_discount_amount(frm, cdt, cdn);
+//         },
+
+//         discount(frm, cdt, cdn) {
+//             recalc_discount_amount(frm, cdt, cdn);
+//         }
+
+//     });
+
+// });
+
+
+// function recalc_discount_amount(frm, cdt, cdn) {
+//     console.log("Recalculating discount amount is ok");
+
+//     let row = locals[cdt][cdn];
+//     if (!row) return;
+
+//     let qty = flt(row.qty);
+//     let original_rate = flt(row.rate);
+//     let discount = flt(row.discount);
+
+//     // prevent recursive recalculation
+//     if (row.__discount_applied) return;
+
+//     row.__discount_applied = true;
+
+//     // original amount
+//     let original_amount = qty * original_rate;
+
+//     // discount amount
+//     let discount_amount =
+//         original_amount * discount / 100;
+
+//     // final amount
+//     let final_amount =
+//         original_amount - discount_amount;
+
+//     // final rate
+//     let final_rate =
+//         qty ? final_amount / qty : 0;
+
+//     console.log(`Recalculating amount: qty=${qty}, original_rate=${original_rate}, discount=${discount}%, original_amount=${original_amount}, discount_amount=${discount_amount}, final_amount=${final_amount}, final_rate=${final_rate}`);
+
+//     frappe.model.set_value(cdt, cdn, {
+
+//         amount: final_amount,
+
+//         base_rate: final_rate,
+//         base_amount: final_amount,
+
+//         net_rate: final_rate,
+//         net_amount: final_amount,
+
+//         base_net_rate: final_rate,
+//         base_net_amount: final_amount,
+
+//         taxable_value: final_amount
+
+//     }).then(() => {
+
+//         row.__discount_applied = false;
+
+//         // IMPORTANT
+//         frm.trigger("calculate_taxes_and_totals");
+
+//         frm.refresh_fields();
+//     });
+// }
+
+
+
+
+
+// [
+//     "Purchase Order Item",
+//     "Purchase Receipt Item",
+//     "Purchase Invoice Item"
+// ].forEach((doctype) => {
+
+//     frappe.ui.form.on(doctype, {
+
+//         qty(frm, cdt, cdn) {
+//             apply_discount(cdt, cdn);
+//         },
+
+//         rate(frm, cdt, cdn) {
+//             apply_discount(cdt, cdn);
+//         },
+
+//         discount(frm, cdt, cdn) {
+//             apply_discount(cdt, cdn);
+//         }
+
+//     });
+
+// });
+
+
+// function apply_discount(cdt, cdn) {
+
+//     let row = locals[cdt][cdn];
+
+//     if (!row) return;
+
+//     let qty = flt(row.qty);
+//     let rate = flt(row.rate);
+//     let discount = flt(row.discount);
+
+//     // original amount
+//     let original_amount =
+//         qty * rate;
+
+//     // discounted amount
+//     let final_amount =
+//         original_amount -
+//         (original_amount * discount / 100);
+
+//     // ONLY amount changes
+//     frappe.model.set_value(
+//         cdt,
+//         cdn,
+//         "amount",
+//         final_amount
+//     );
+
+//     // optional
+//     frappe.model.set_value(
+//         cdt,
+//         cdn,
+//         "net_amount",
+//         final_amount
+//     );
+// }
+
+
+
+
+
+[
+    "Purchase Order Item",
+    "Purchase Receipt Item",
+    "Purchase Invoice Item"
+].forEach((doctype) => {
+
+    frappe.ui.form.on(doctype, {
+
+        qty(frm, cdt, cdn) {
+            apply_discount(cdt, cdn);
+        },
+
+        rate(frm, cdt, cdn) {
+            apply_discount(cdt, cdn);
+        },
+
+        discount(frm, cdt, cdn) {
+            apply_discount(cdt, cdn);
+        }
+
+    });
+
+});
+
+
+function apply_discount(cdt, cdn) {
+
+    let row = locals[cdt][cdn];
+
+    if (!row) return;
+
+    let qty = flt(row.qty);
+    let rate = flt(row.rate);
+    let discount = flt(row.discount);
+
+    let original_amount =
+        qty * rate;
+
+    let final_amount =
+        original_amount -
+        (original_amount * discount / 100);
+
+    row.amount = final_amount;
+
+    refresh_field("items");
+}

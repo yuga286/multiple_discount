@@ -45,6 +45,15 @@ override_doctype_class = {
 #         "multiple_dis.overrides.custom_trial_balance"
 # }
 doc_events = {
+    "Purchase Order": {
+        "validate": "multiple_dis.api.apply_discount"
+    },
+    "Purchase Receipt": {
+        "validate": "multiple_dis.api.apply_discount"
+    },
+    "Purchase Invoice": {
+        "validate": "multiple_dis.api.apply_discount"
+    },
     "Stock Entry": {
         "before_save": "multiple_dis.api.freeze_item_qty"
     },
