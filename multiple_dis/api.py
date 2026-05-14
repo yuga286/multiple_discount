@@ -306,6 +306,7 @@ def get_item_details(item_code, selling_price_list, company):
     return result
 
 
+    
 
 import frappe
 from frappe.utils import flt
@@ -313,12 +314,11 @@ from frappe.utils import flt
 
 def apply_discount(doc, method):
 
+    total = 0
+
     for row in doc.items:
 
         discount = flt(row.discount)
-
-        if not discount:
-            continue
 
         original_amount = (
             flt(row.qty) * flt(row.rate)
@@ -331,9 +331,21 @@ def apply_discount(doc, method):
 
         row.amount = final_amount
         row.base_amount = final_amount
-
         row.net_amount = final_amount
         row.base_net_amount = final_amount
 
         # optional
         row.taxable_value = final_amount
+
+        total += final_amount
+
+    # parent totals
+    doc.total = total
+    doc.net_total = total
+    doc.base_total = total
+    doc.base_net_total = total
+
+    # grand totals
+    doc.grand_total = total
+    doc.base_grand_total = total
+    doc.rounded_total = total
