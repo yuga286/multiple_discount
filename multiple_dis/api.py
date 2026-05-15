@@ -308,7 +308,86 @@ def get_item_details(item_code, selling_price_list, company):
 
     
 
-import frappe
+# import frappe
+# from frappe.utils import flt
+
+
+# def apply_discount(doc, method):
+
+#     total = 0
+
+#     for row in doc.items:
+
+#         discount = flt(row.discount)
+
+#         original_amount = (
+#             flt(row.qty) * flt(row.rate)
+#         )
+
+#         final_amount = (
+#             original_amount -
+#             (original_amount * discount / 100)
+#         )
+
+#         row.amount = final_amount
+#         row.base_amount = final_amount
+#         row.net_amount = final_amount
+#         row.base_net_amount = final_amount
+
+#         # optional
+#         row.taxable_value = final_amount
+
+#         total += final_amount
+
+#     # parent totals
+#     doc.total = total
+#     doc.net_total = total
+#     doc.base_total = total
+#     doc.base_net_total = total
+
+#     # grand totals
+#     doc.grand_total = total
+#     doc.base_grand_total = total
+#     doc.rounded_total = total
+
+
+
+
+# from frappe.utils import flt
+
+
+# def apply_discount(doc, method):
+
+#     total = 0
+
+#     for row in doc.items:
+
+#         qty = flt(row.qty)
+#         rate = flt(row.rate)
+#         discount = flt(row.discount)
+
+#         original_amount = qty * rate
+
+#         final_amount = (
+#             original_amount -
+#             (original_amount * discount / 100)
+#         )
+
+#         # keep rate same
+#         row.amount = final_amount
+#         row.net_amount = final_amount
+
+#         total += final_amount
+
+#     doc.total = total
+#     doc.net_total = total
+#     doc.grand_total = total
+#     doc.rounded_total = total
+
+
+
+
+
 from frappe.utils import flt
 
 
@@ -318,11 +397,11 @@ def apply_discount(doc, method):
 
     for row in doc.items:
 
+        qty = flt(row.qty)
+        rate = flt(row.rate)
         discount = flt(row.discount)
 
-        original_amount = (
-            flt(row.qty) * flt(row.rate)
-        )
+        original_amount = qty * rate
 
         final_amount = (
             original_amount -
@@ -330,22 +409,24 @@ def apply_discount(doc, method):
         )
 
         row.amount = final_amount
-        row.base_amount = final_amount
         row.net_amount = final_amount
-        row.base_net_amount = final_amount
 
-        # optional
-        row.taxable_value = final_amount
+        # IMPORTANT
+        row.base_amount = final_amount
+        row.base_net_amount = final_amount
 
         total += final_amount
 
-    # parent totals
+    # totals
     doc.total = total
     doc.net_total = total
+
+    # IMPORTANT
     doc.base_total = total
     doc.base_net_total = total
 
-    # grand totals
     doc.grand_total = total
     doc.base_grand_total = total
+
     doc.rounded_total = total
+    doc.base_rounded_total = total

@@ -126,6 +126,129 @@ function set_gst(frm) {
 
 
 
+// better approach: calculate row amount without making server call and then refresh the grid once after all calculations are done instead of refreshing it for every row
+// [
+//     "Purchase Order",
+//     "Purchase Receipt",
+//     "Purchase Invoice"
+// ].forEach((doctype) => {
+
+//     frappe.ui.form.on(doctype, {
+
+//         onload_post_render(frm) {
+
+//             setTimeout(() => {
+
+//                 recalculate_all_items(frm);
+
+//             }, 300);
+
+//         }
+
+//     });
+
+// });
+
+
+// [
+//     "Purchase Order Item",
+//     "Purchase Receipt Item",
+//     "Purchase Invoice Item"
+// ].forEach((doctype) => {
+
+//     frappe.ui.form.on(doctype, {
+
+//         qty(frm, cdt, cdn) {
+//             apply_discount(frm, cdt, cdn);
+//         },
+
+//         rate(frm, cdt, cdn) {
+//             apply_discount(frm, cdt, cdn);
+//         },
+
+//         discount(frm, cdt, cdn) {
+//             apply_discount(frm, cdt, cdn);
+//         }
+
+//     });
+
+// });
+
+
+// function apply_discount(frm, cdt, cdn) {
+
+//     let row = locals[cdt][cdn];
+
+//     if (!row) return;
+
+//     calculate_row(row);
+
+//     frm.fields_dict.items.grid.refresh();
+
+//     frm.dirty();
+// }
+
+
+// function recalculate_all_items(frm) {
+
+//     (frm.doc.items || []).forEach(row => {
+
+//         calculate_row(row);
+
+//     });
+
+//     frm.fields_dict.items.grid.refresh();
+
+//     frm.refresh_field("items");
+
+//     frm.dirty();
+// }
+
+
+// function calculate_row(row) {
+
+//     let qty = flt(row.qty);
+//     let rate = flt(row.rate);
+//     let discount = flt(row.discount);
+
+//     let original_amount = qty * rate;
+
+//     let final_amount =
+//         original_amount -
+//         (original_amount * discount / 100);
+
+//     row.amount = final_amount;
+//     row.net_amount = final_amount;
+// }
+
+
+
+
+
+
+[
+    "Purchase Order",
+    "Purchase Receipt",
+    "Purchase Invoice"
+].forEach((doctype) => {
+
+    frappe.ui.form.on(doctype, {
+
+        onload_post_render(frm) {
+
+            setTimeout(() => {
+
+                recalculate_all_items(frm, false);
+
+            }, 300);
+
+        }
+
+    });
+
+});
+
+
 [
     "Purchase Order Item",
     "Purchase Receipt Item",
@@ -157,43 +280,45 @@ function apply_discount(frm, cdt, cdn) {
 
     if (!row) return;
 
+    calculate_row(row);
+
+    frm.fields_dict.items.grid.refresh();
+
+    // ONLY here dirty needed
+    frm.dirty();
+}
+
+
+function recalculate_all_items(frm, mark_dirty = false) {
+
+    (frm.doc.items || []).forEach(row => {
+
+        calculate_row(row);
+
+    });
+
+    frm.fields_dict.items.grid.refresh();
+
+    frm.refresh_field("items");
+
+    if (mark_dirty) {
+        frm.dirty();
+    }
+}
+
+
+function calculate_row(row) {
+
     let qty = flt(row.qty);
     let rate = flt(row.rate);
     let discount = flt(row.discount);
 
-    // original amount
-    let original_amount =
-        qty * rate;
+    let original_amount = qty * rate;
 
-    // discounted amount
     let final_amount =
         original_amount -
         (original_amount * discount / 100);
 
-    // row amounts
     row.amount = final_amount;
     row.net_amount = final_amount;
-    row.base_amount = final_amount;
-    row.base_net_amount = final_amount;
-
-    // parent totals
-    let total = 0;
-
-    frm.doc.items.forEach(d => {
-        total += flt(d.amount);
-    });
-
-    frm.set_value("total", total);
-    frm.set_value("net_total", total);
-    frm.set_value("grand_total", total);
-    frm.set_value("rounded_total", total);
-
-    refresh_field("items");
-
-    frm.refresh_fields([
-        "total",
-        "net_total",
-        "grand_total",
-        "rounded_total"
-    ]);
 }
