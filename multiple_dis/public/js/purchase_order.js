@@ -127,6 +127,110 @@ function set_gst(frm) {
 
 
 // better approach: calculate row amount without making server call and then refresh the grid once after all calculations are done instead of refreshing it for every row
+[
+    "Purchase Order",
+    "Purchase Receipt",
+    "Purchase Invoice"
+].forEach((doctype) => {
+
+    frappe.ui.form.on(doctype, {
+
+        onload_post_render(frm) {
+
+            setTimeout(() => {
+
+                if (frm.doc.docstatus !== 0) return;
+
+                recalculate_all_items(frm);
+
+            }, 300);
+
+        }
+
+    });
+
+});
+
+
+[
+    "Purchase Order Item",
+    "Purchase Receipt Item",
+    "Purchase Invoice Item"
+].forEach((doctype) => {
+
+    frappe.ui.form.on(doctype, {
+
+        qty(frm, cdt, cdn) {
+
+            if (frm.doc.docstatus !== 0) return;
+            
+            apply_discount(frm, cdt, cdn);
+        },
+
+        rate(frm, cdt, cdn) {
+            apply_discount(frm, cdt, cdn);
+        },
+
+        discount(frm, cdt, cdn) {
+            apply_discount(frm, cdt, cdn);
+        }
+
+    });
+
+});
+
+
+function apply_discount(frm, cdt, cdn) {
+
+    let row = locals[cdt][cdn];
+
+    if (!row) return;
+
+    calculate_row(row);
+
+    frm.fields_dict.items.grid.refresh();
+
+    frm.dirty();
+}
+
+
+function recalculate_all_items(frm) {
+
+    (frm.doc.items || []).forEach(row => {
+
+        calculate_row(row);
+
+    });
+
+    frm.fields_dict.items.grid.refresh();
+
+    frm.refresh_field("items");
+
+    frm.dirty();
+}
+
+
+function calculate_row(row) {
+
+    let qty = flt(row.qty);
+    let rate = flt(row.rate);
+    let discount = flt(row.discount);
+
+    let original_amount = qty * rate;
+
+    let final_amount =
+        original_amount -
+        (original_amount * discount / 100);
+
+    row.amount = final_amount;
+    row.net_amount = final_amount;
+}
+
+
+
+
+
+
 // [
 //     "Purchase Order",
 //     "Purchase Receipt",
@@ -139,7 +243,7 @@ function set_gst(frm) {
 
 //             setTimeout(() => {
 
-//                 recalculate_all_items(frm);
+//                 recalculate_all_items(frm, false);
 
 //             }, 300);
 
@@ -185,11 +289,12 @@ function set_gst(frm) {
 
 //     frm.fields_dict.items.grid.refresh();
 
+//     // ONLY here dirty needed
 //     frm.dirty();
 // }
 
 
-// function recalculate_all_items(frm) {
+// function recalculate_all_items(frm, mark_dirty = false) {
 
 //     (frm.doc.items || []).forEach(row => {
 
@@ -200,8 +305,12 @@ function set_gst(frm) {
 //     frm.fields_dict.items.grid.refresh();
 
 //     frm.refresh_field("items");
+//     frm.trigger("calculate_taxes_and_totals");
 
-//     frm.dirty();
+
+//     if (mark_dirty) {
+//         frm.dirty();
+//     }
 // }
 
 
@@ -211,114 +320,19 @@ function set_gst(frm) {
 //     let rate = flt(row.rate);
 //     let discount = flt(row.discount);
 
-//     let original_amount = qty * rate;
+//     if (!qty) return;
 
-//     let final_amount =
-//         original_amount -
-//         (original_amount * discount / 100);
+//     let discounted_rate =
+//         rate - (rate * discount / 100);
 
-//     row.amount = final_amount;
-//     row.net_amount = final_amount;
+//     // KEEP visual rate unchanged
+//     row.net_rate = discounted_rate;
+//     row.base_net_rate = discounted_rate;
+
+//     // let ERPNext calculate totals naturally
+//     row.amount = qty * discounted_rate;
+//     row.net_amount = qty * discounted_rate;
+
+//     row.base_amount = qty * discounted_rate;
+//     row.base_net_amount = qty * discounted_rate;
 // }
-
-
-
-
-
-
-[
-    "Purchase Order",
-    "Purchase Receipt",
-    "Purchase Invoice"
-].forEach((doctype) => {
-
-    frappe.ui.form.on(doctype, {
-
-        onload_post_render(frm) {
-
-            setTimeout(() => {
-
-                recalculate_all_items(frm, false);
-
-            }, 300);
-
-        }
-
-    });
-
-});
-
-
-[
-    "Purchase Order Item",
-    "Purchase Receipt Item",
-    "Purchase Invoice Item"
-].forEach((doctype) => {
-
-    frappe.ui.form.on(doctype, {
-
-        qty(frm, cdt, cdn) {
-            apply_discount(frm, cdt, cdn);
-        },
-
-        rate(frm, cdt, cdn) {
-            apply_discount(frm, cdt, cdn);
-        },
-
-        discount(frm, cdt, cdn) {
-            apply_discount(frm, cdt, cdn);
-        }
-
-    });
-
-});
-
-
-function apply_discount(frm, cdt, cdn) {
-
-    let row = locals[cdt][cdn];
-
-    if (!row) return;
-
-    calculate_row(row);
-
-    frm.fields_dict.items.grid.refresh();
-
-    // ONLY here dirty needed
-    frm.dirty();
-}
-
-
-function recalculate_all_items(frm, mark_dirty = false) {
-
-    (frm.doc.items || []).forEach(row => {
-
-        calculate_row(row);
-
-    });
-
-    frm.fields_dict.items.grid.refresh();
-
-    frm.refresh_field("items");
-
-    if (mark_dirty) {
-        frm.dirty();
-    }
-}
-
-
-function calculate_row(row) {
-
-    let qty = flt(row.qty);
-    let rate = flt(row.rate);
-    let discount = flt(row.discount);
-
-    let original_amount = qty * rate;
-
-    let final_amount =
-        original_amount -
-        (original_amount * discount / 100);
-
-    row.amount = final_amount;
-    row.net_amount = final_amount;
-}

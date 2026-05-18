@@ -46,20 +46,20 @@ override_doctype_class = {
 # }
 doc_events = {
     "Purchase Order": {
-        # "before_validate": "multiple_dis.api.apply_discount",
-        "validate": "multiple_dis.api.apply_discount",
+        # "before_validate": "multiple_dis.api.apply_discount"
+        "validate": "multiple_dis.api.apply_discount"
         # "before_submit": "multiple_dis.api.apply_discount"
     },
 
     "Purchase Receipt": {
-        # "before_validate": "multiple_dis.api.apply_discount",
-        "validate": "multiple_dis.api.apply_discount",
+        # "before_validate": "multiple_dis.api.apply_discount"
+        "validate": "multiple_dis.api.apply_discount"
         # "before_submit": "multiple_dis.api.apply_discount"
     },
 
     "Purchase Invoice": {
-        # "before_validate": "multiple_dis.api.apply_discount",
-        "validate": "multiple_dis.api.apply_discount",
+        # "before_validate": "multiple_dis.api.apply_discount"
+        "validate": "multiple_dis.api.apply_discount"
         # "before_submit": "multiple_dis.api.apply_discount"
     },
     "Stock Entry": {
