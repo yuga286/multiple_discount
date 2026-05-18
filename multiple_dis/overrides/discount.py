@@ -1,37 +1,18 @@
-from frappe.utils import flt
+"""
+DEPRECATED — no longer contains executable code.
 
+The previous before_validate hook here incorrectly modified item.rate:
+    rate = price_list_rate * (1 - discount / 100)
 
-def apply_discount(doc, method):
+That caused:
+  1. rate changed permanently → "Maintain Same Rate" error on PI
+  2. changing discount back to 0% did not restore the original amount
+  3. taxes calculated before the hook ran, so they used the pre-discount base
+  4. base_grand_total, outstanding_amount were manually overwritten incorrectly
 
-    total = 0
+The correct implementation is in:
+    multiple_dis/overrides/purchase_controller.py  →  DiscountedTaxesAndTotals
 
-    for row in doc.items:
-
-        qty = flt(row.qty)
-        rate = flt(row.rate)
-        discount = flt(row.discount)
-
-        original_amount = qty * rate
-
-        final_amount = (
-            original_amount -
-            (original_amount * discount / 100)
-        )
-
-        # FINAL overwrite
-        row.amount = final_amount
-        row.base_amount = final_amount
-        row.net_amount = final_amount
-        row.base_net_amount = final_amount
-
-        total += final_amount
-
-    # overwrite parent totals
-    doc.total = total
-    doc.net_total = total
-    doc.base_total = total
-    doc.base_net_total = total
-
-    doc.grand_total = total
-    doc.base_grand_total = total
-    doc.rounded_total = total
+Registered via override_doctype_class in hooks.py.
+No doc_event hooks are needed for purchase documents.
+"""

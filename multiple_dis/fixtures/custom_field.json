@@ -268,7 +268,9 @@
     "fieldtype": "Percent",
     "label": "Discount %",
     "insert_after": "price_list_rate",
-    "default": "0"
+    "default": "0",
+    "in_list_view": 1,
+    "columns": 1
   },
   {
     "doctype": "Custom Field",
@@ -278,7 +280,9 @@
     "fieldtype": "Percent",
     "label": "Discount %",
     "insert_after": "price_list_rate",
-    "default": "0"
+    "default": "0",
+    "in_list_view": 1,
+    "columns": 1
   },
   {
     "doctype": "Custom Field",
@@ -288,6 +292,8 @@
     "fieldtype": "Percent",
     "label": "Discount %",
     "insert_after": "price_list_rate",
-    "default": "0"
+    "default": "0",
+    "in_list_view": 1,
+    "columns": 1
   }
 ]
