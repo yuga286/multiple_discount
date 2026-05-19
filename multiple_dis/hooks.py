@@ -32,7 +32,12 @@ doctype_js = {
 #     "Purchase Order": "public/js/purchase_order.js"
 # }
 override_doctype_class = {
-    "Stock Entry": "multiple_dis.overrides.stock_entry.CustomStockEntry"
+    "Stock Entry": "multiple_dis.overrides.stock_entry.CustomStockEntry",
+    # Purchase discount: DiscountedTaxesAndTotals overrides calculate_item_values
+    # so that amount/net_amount reflect the custom discount while rate is NEVER changed.
+    "Purchase Order":   "multiple_dis.overrides.purchase_controller.CustomPurchaseOrder",
+    "Purchase Receipt": "multiple_dis.overrides.purchase_controller.CustomPurchaseReceipt",
+    "Purchase Invoice": "multiple_dis.overrides.purchase_controller.CustomPurchaseInvoice",
 }
 
 # doc_events = {
@@ -45,23 +50,23 @@ override_doctype_class = {
 #         "multiple_dis.overrides.custom_trial_balance"
 # }
 doc_events = {
-    "Purchase Order": {
-        # "before_validate": "multiple_dis.api.apply_discount"
-        "validate": "multiple_dis.api.apply_discount"
-        # "before_submit": "multiple_dis.api.apply_discount"
-    },
+    # "Purchase Order": {
+    #     # "before_validate": "multiple_dis.api.apply_discount"
+    #     "validate": "multiple_dis.api.apply_discount"
+    #     # "before_submit": "multiple_dis.api.apply_discount"
+    # },
 
-    "Purchase Receipt": {
-        # "before_validate": "multiple_dis.api.apply_discount"
-        "validate": "multiple_dis.api.apply_discount"
-        # "before_submit": "multiple_dis.api.apply_discount"
-    },
+    # "Purchase Receipt": {
+    #     # "before_validate": "multiple_dis.api.apply_discount"
+    #     "validate": "multiple_dis.api.apply_discount"
+    #     # "before_submit": "multiple_dis.api.apply_discount"
+    # },
 
-    "Purchase Invoice": {
-        # "before_validate": "multiple_dis.api.apply_discount"
-        "validate": "multiple_dis.api.apply_discount"
-        # "before_submit": "multiple_dis.api.apply_discount"
-    },
+    # "Purchase Invoice": {
+    #     # "before_validate": "multiple_dis.api.apply_discount"
+    #     "validate": "multiple_dis.api.apply_discount"
+    #     # "before_submit": "multiple_dis.api.apply_discount"
+    # },
     "Stock Entry": {
         "before_save": "multiple_dis.api.freeze_item_qty"
     },

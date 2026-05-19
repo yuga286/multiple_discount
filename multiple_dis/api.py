@@ -311,55 +311,55 @@ def get_item_details(item_code, selling_price_list, company):
 
 
 # correct one with low process speed
-from frappe.utils import flt
+# from frappe.utils import flt
 
 
-def apply_discount(doc, method):
+# def apply_discount(doc, method):
 
-    total = 0
+#     total = 0
 
-    for row in doc.items:
+#     for row in doc.items:
 
-        qty = flt(row.qty)
-        rate = flt(row.rate)
-        discount = flt(row.discount)
+#         qty = flt(row.qty)
+#         rate = flt(row.rate)
+#         discount = flt(row.discount)
 
-        original_amount = qty * rate
+#         original_amount = qty * rate
 
-        final_amount = (
-            original_amount -
-            (original_amount * discount / 100)
-        )
+#         final_amount = (
+#             original_amount -
+#             (original_amount * discount / 100)
+#         )
 
-        row.amount = final_amount
-        row.net_amount = final_amount
+#         row.amount = final_amount
+#         row.net_amount = final_amount
 
-        # IMPORTANT
-        row.base_amount = final_amount
-        row.base_net_amount = final_amount
+#         # IMPORTANT
+#         row.base_amount = final_amount
+#         row.base_net_amount = final_amount
         
-        total += final_amount
+#         total += final_amount
         
-        # update taxes table taxable values
-    for tax in doc.taxes:
+#         # update taxes table taxable values
+#     for tax in doc.taxes:
 
-        tax.net_amount = total
-        tax.base_net_amount = total
+#         tax.net_amount = total
+#         tax.base_net_amount = total
         
-        tax.total = total + doc.total_taxes_and_charges
-        tax.base_total = total + doc.total_taxes_and_charges
+#         tax.total = total + doc.total_taxes_and_charges
+#         tax.base_total = total + doc.total_taxes_and_charges
 
-    # totals
-    doc.total = total
-    doc.net_total = total
+#     # totals
+#     doc.total = total
+#     doc.net_total = total
     
-    # IMPORTANT
-    doc.base_total = total
-    doc.base_net_total = total
+#     # IMPORTANT
+#     doc.base_total = total
+#     doc.base_net_total = total
 
-    doc.grand_total = total + doc.total_taxes_and_charges
-    doc.outstanding_amount = total + doc.total_taxes_and_charges
-    doc.base_grand_total = total
+#     doc.grand_total = total + doc.total_taxes_and_charges
+#     doc.outstanding_amount = total + doc.total_taxes_and_charges
+#     doc.base_grand_total = total
 
-    doc.rounded_total = total
-    doc.base_rounded_total = total
+#     doc.rounded_total = total
+#     doc.base_rounded_total = total
