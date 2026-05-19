@@ -1,0 +1,9 @@
+{
+  "doctype": "Report",
+  "name": "Custom Stock Balance",
+  "ref_doctype": "Item",
+  "reference_report": "Stock Balance Report Item-Wise",
+  "report_type": "Script Report",
+  "is_standard": "Yes",
+  "module": "mul dis"
+}
