@@ -1,0 +1,39 @@
+{
+ "add_total_row": 1,
+ "add_translate_data": 1,
+ "columns": [],
+ "creation": "2026-05-19 19:29:00.030522",
+ "disabled": 0,
+ "docstatus": 0,
+ "doctype": "Report",
+ "filters": [],
+ "idx": 0,
+ "is_standard": "Yes",
+ "json": "{\"columns\":[{\"compareValue\":null,\"editable\":false,\"fieldname\":\"item_name\",\"id\":\"item_name\",\"label\":\"Item Name\",\"name\":\"Item Name\",\"width\":150},{\"compareValue\":null,\"editable\":false,\"fieldname\":\"item_group\",\"fieldtype\":\"Link\",\"id\":\"item_group\",\"label\":\"Item Group\",\"name\":\"Item Group\",\"options\":\"Item Group\",\"width\":100},{\"compareValue\":null,\"editable\":false,\"fieldname\":\"warehouse\",\"fieldtype\":\"Link\",\"id\":\"warehouse\",\"label\":\"Warehouse\",\"name\":\"Warehouse\",\"options\":\"Warehouse\",\"width\":100},{\"compareValue\":null,\"convertible\":\"qty\",\"editable\":false,\"fieldname\":\"opening_qty\",\"fieldtype\":\"Float\",\"id\":\"opening_qty\",\"label\":\"Opening Qty\",\"name\":\"Opening Qty\",\"width\":100},{\"compareValue\":null,\"editable\":false,\"fieldname\":\"stock_uom\",\"fieldtype\":\"Link\",\"id\":\"stock_uom\",\"label\":\"Stock UOM\",\"name\":\"Stock UOM\",\"options\":\"UOM\",\"width\":90},{\"compareValue\":null,\"convertible\":\"qty\",\"editable\":false,\"fieldname\":\"in_qty\",\"fieldtype\":\"Float\",\"id\":\"in_qty\",\"label\":\"In Qty\",\"name\":\"In Qty\",\"width\":80},{\"compareValue\":null,\"convertible\":\"qty\",\"editable\":false,\"fieldname\":\"out_qty\",\"fieldtype\":\"Float\",\"id\":\"out_qty\",\"label\":\"Out Qty\",\"name\":\"Out Qty\",\"width\":80},{\"compareValue\":null,\"convertible\":\"qty\",\"editable\":false,\"fieldname\":\"out_qty_alt\",\"fieldtype\":\"Float\",\"id\":\"out_qty_alt\",\"label\":\"Out Qty (Carton)\",\"name\":\"Out Qty (Carton)\",\"width\":80},{\"compareValue\":null,\"convertible\":\"qty\",\"editable\":false,\"fieldname\":\"bal_qty\",\"fieldtype\":\"Float\",\"id\":\"bal_qty\",\"label\":\"Balance Qty\",\"name\":\"Balance Qty\",\"width\":100}],\"filters\":{\"company\":\"G. C. Foods Pvt. Ltd.\",\"from_date\":\"2026-05-06\",\"to_date\":\"2026-05-06\",\"item_group\":\"Cookies - FG\",\"item_code\":[],\"warehouse\":[\"Store Ghaziabad - GCF\"],\"valuation_field_type\":\"Currency\",\"branch\":[],\"include_uom\":\"Carton\"}}",
+ "letter_head": null,
+ "modified": "2026-05-20 11:43:10.597003",
+ "modified_by": "Administrator",
+ "module": "mul dis",
+ "name": "Stock Balance Report Item-Wise Custom",
+ "owner": "Administrator",
+ "prepared_report": 0,
+ "ref_doctype": "Stock Ledger Entry",
+ "reference_report": "",
+ "report_name": "Stock Balance Report Item-Wise Custom",
+ "report_type": "Script Report",
+ "roles": [
+  {
+   "role": "Stock User"
+  },
+  {
+   "role": "Accounts Manager"
+  },
+  {
+   "role": "GC Administrator"
+  },
+  {
+   "role": "Purchase Manager"
+  }
+ ],
+ "timeout": 0
+}

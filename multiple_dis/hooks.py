@@ -5,7 +5,11 @@ app_description = "multiple discout and uom"
 app_email = "vigisolvo@gmail.com"
 app_license = "mit"
 
-app_include_js = []
+# app_include_js = [
+#     "/assets/multiple_dis/public/js/whatsapp_override.js"
+# ]
+
+app_include_js ="/assets/multiple_dis/js/whatsapp_override.js"
 
 doctype_js = {
     "Sales Invoice": [
@@ -31,6 +35,13 @@ doctype_js = {
 #     "Stock Entry": "public/js/stock_entry.js",
 #     "Purchase Order": "public/js/purchase_order.js"
 # }
+
+
+override_report_data = {
+    "Stock Balance Report Item-Wise": (
+        "multiple_dis.overrides.stock_balance_report.execute"
+    )
+}
 override_doctype_class = {
     "Stock Entry": "multiple_dis.overrides.stock_entry.CustomStockEntry",
     # Purchase discount: DiscountedTaxesAndTotals overrides calculate_item_values
